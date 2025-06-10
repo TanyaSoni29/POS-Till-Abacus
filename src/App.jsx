@@ -1,5 +1,23 @@
 /** @format */
 
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import AppLayout from './AppLayout';
+import Error from './pages/Error';
+import Home from './pages/Home';
+
+/** @format */
+const router = createBrowserRouter([
+	{
+		element: <AppLayout />,
+		errorElement: <Error />,
+		children: [
+			{
+				path: '/',
+				element: <Home />,
+			},
+		],
+	},
+]);
 export default function App() {
-	return <div className='text-green-500'>App</div>;
+	return <RouterProvider router={router} />;
 }
