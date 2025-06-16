@@ -1,5 +1,4 @@
 /** @format */
-
 import ProductItem from './ProductItem';
 
 const fakeProduct = [
@@ -40,15 +39,26 @@ const fakeProduct = [
 		eachPrice: 1200,
 	},
 ];
+
 export default function ProductList() {
 	return (
-		<ul className='divide-y divide-stone-200'>
-			{fakeProduct.map((item) => (
-				<ProductItem
-					item={item}
-					key={item.partNo}
-				/>
-			))}
-		</ul>
+		<table className='w-full border-collapse'>
+			<thead>
+				<tr className='bg-stone-200 font-bold text-md'>
+					<th className='p-2 text-left'>Product</th>
+					<th className='p-2 text-center'>Quantity</th>
+					<th className='p-2 text-center'>Each</th>
+					<th className='p-2 text-center'>Total</th>
+				</tr>
+			</thead>
+			<tbody>
+				{fakeProduct.map((item) => (
+					<ProductItem
+						item={item}
+						key={item.partNo}
+					/>
+				))}
+			</tbody>
+		</table>
 	);
 }
