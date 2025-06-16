@@ -42,7 +42,7 @@ const fakeProduct = [
 
 export default function ProductList() {
 	return (
-		<table className='w-full border-collapse'>
+		<table className='w-full h-auto border-collapse'>
 			<thead>
 				<tr className='bg-stone-200 font-bold text-md'>
 					<th className='p-2 text-left'>Product</th>
@@ -51,7 +51,7 @@ export default function ProductList() {
 					<th className='p-2 text-center'>Total</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody className='overflow-y-auto'>
 				{fakeProduct.map((item) => (
 					<ProductItem
 						item={item}
