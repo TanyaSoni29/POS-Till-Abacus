@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-export default function ProductSearch() {
+export default function CustomerEntry() {
 	const {
 		register,
 		handleSubmit,
@@ -24,7 +24,7 @@ export default function ProductSearch() {
 	}, [reset, isSubmitSuccessful]);
 	return (
 		<div className='flex flex-col justify-center item-center w-full'>
-			<h2 className='text-lg font-semibold uppercase mb-2'>Product Search</h2>
+			<h2 className='text-lg font-semibold uppercase mb-2'>Customer Search</h2>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
 				className='flex flex-wrap justify-start items-center gap-2 border border-sky-100 p-4 w-auto rounded-md'

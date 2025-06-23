@@ -44,7 +44,7 @@ export default function ProductList() {
 	return (
 		<table className='w-full h-auto border-collapse'>
 			<thead>
-				<tr className='bg-stone-200 font-bold text-md'>
+				<tr className='bg-sky-50 font-bold text-md'>
 					<th className='p-2 text-left'>Product</th>
 					<th className='p-2 text-center'>Quantity</th>
 					<th className='p-2 text-center'>Each</th>

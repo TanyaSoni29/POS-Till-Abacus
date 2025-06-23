@@ -7,7 +7,7 @@ export default function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	return (
-		<div className='text-black border-b border-gray-300 p-4'>
+		<div className='text-black border-b border-sky-100 p-4'>
 			<div className='flex justify-between items-center gap-2 md:gap-4'>
 				<button
 					onClick={() => setIsMenuOpen((prev) => !prev)}
