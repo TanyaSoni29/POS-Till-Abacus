@@ -49,6 +49,7 @@ export default function ProductList() {
 					<th className='p-2 text-center'>Quantity</th>
 					<th className='p-2 text-center'>Each</th>
 					<th className='p-2 text-center'>Total</th>
+					<th className='p-2 text-center'>Delete</th>
 				</tr>
 			</thead>
 			<tbody className='overflow-y-auto'>
