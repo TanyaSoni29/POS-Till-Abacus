@@ -1,5 +1,21 @@
 /** @format */
+import MenuIcon from '@mui/icons-material/Menu';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import { useState } from 'react';
 
 export default function Header() {
-	return <div className="text-black border-b border-gray-300 p-4">Header</div>;
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+	return (
+		<div className='text-black border-b border-gray-300 p-4'>
+			<div className='flex justify-between items-center gap-2 md:gap-4'>
+				<button
+					onClick={() => setIsMenuOpen((prev) => !prev)}
+					className='px-2 py-2 rounded-full bg-sky-50 hover:bg-sky-200 duration-300 transition-all border border-sky-100'
+				>
+					{isMenuOpen ? <MenuOpenIcon /> : <MenuIcon />}
+				</button>
+			</div>
+		</div>
+	);
 }

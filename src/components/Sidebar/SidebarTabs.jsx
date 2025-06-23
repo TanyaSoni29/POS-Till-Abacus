@@ -7,7 +7,7 @@ export default function SidebarTabs() {
 	return (
 		<div className='flex flex-col justify-start items-center gap-2 h-screen'>
 			<div className='w-full justify-evenly items-center flex gap-4 p-4 bg-gray-100 text-gray-400 border-b border-gray-400'>
-				<div className='w-full h-full flex flex-col items-center justify-center hover:shadow-md transition-all duration-100'>
+				<div className='w-full h-full flex flex-col items-center justify-center transition-all duration-100'>
 					<AccountCircleOutlinedIcon className='' />
 					<button className='w-full h-full'>Customer</button>
 				</div>
