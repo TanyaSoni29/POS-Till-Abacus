@@ -8,7 +8,7 @@ const initialState = {
 			id: 1,
 			// customer: customers[0],
 			items: [],
-			createdAt: new Date(),
+			createdAt: new Date().toISOString(),
 		},
 	],
 	activeOrderId: 1,
@@ -21,6 +21,9 @@ const orderSlice = createSlice({
 	reducers: {
 		setOrders(state, action) {
 			state.orders = action.payload;
+		},
+		addOrder(state, action) {
+			state.orders.push(action.payload); // ✅ Adds one order
 		},
 		setActiveOrderId(state, action) {
 			state.activeOrderId = action.payload;
@@ -44,6 +47,6 @@ const orderSlice = createSlice({
 // 	};
 // }
 
-export const { setOrders, setActiveOrderId, setNextOrderId } =
+export const { setOrders, setActiveOrderId, setNextOrderId, addOrder } =
 	orderSlice.actions;
 export default orderSlice.reducer;

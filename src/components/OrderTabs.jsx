@@ -3,6 +3,7 @@
 import { Plus, X, User } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+	addOrder,
 	setActiveOrderId,
 	setNextOrderId,
 	setOrders,
@@ -15,14 +16,14 @@ export const OrderTabs = () => {
 		(state) => state.order
 	);
 	const getOrderTotal = (order) => {
-		return order.items.reduce(
+		return order.items?.reduce(
 			(sum, item) => sum + item.product.price * item.quantity,
 			0
 		);
 	};
 
 	const getItemCount = (order) => {
-		return order.items.reduce((sum, item) => sum + item.quantity, 0);
+		return order.items?.reduce((sum, item) => sum + item.quantity, 0);
 	};
 
 	const createNewOrder = () => {
@@ -30,11 +31,11 @@ export const OrderTabs = () => {
 			id: nextOrderId,
 			customer: customers[0], // Default to walk-in customer
 			items: [],
-			createdAt: new Date(),
+			createdAt: new Date().toISOString(),
 		};
-		setOrders((prev) => [...prev, newOrder]);
-		setActiveOrderId(nextOrderId);
-		setNextOrderId((prev) => prev + 1);
+		dispatch(addOrder(newOrder));
+		dispatch(setActiveOrderId(nextOrderId));
+		dispatch(setNextOrderId((prev) => prev + 1));
 	};
 
 	const closeOrder = (orderId) => {
@@ -44,16 +45,18 @@ export const OrderTabs = () => {
 				id: nextOrderId,
 				customer: customers[0],
 				items: [],
-				createdAt: new Date(),
+				createdAt: new Date().toISOString(),
 			};
-			dispatch(setOrders([newOrder]));
+			dispatch(addOrder(newOrder));
 			dispatch(setActiveOrderId(nextOrderId));
 			dispatch(setNextOrderId((prev) => prev + 1));
 		} else {
-			setOrders((prev) => prev.filter((order) => order.id !== orderId));
-			if (activeOrderId === orderId) {
-				const remainingOrders = orders.filter((order) => order.id !== orderId);
-				setActiveOrderId(remainingOrders[0].id);
+			const updatedOrders = orders.filter((order) => order.id !== orderId);
+			dispatch(setOrders(updatedOrders));
+
+			// Fix: Use updatedOrders instead of filtering again
+			if (activeOrderId === orderId && updatedOrders.length > 0) {
+				dispatch(setActiveOrderId(updatedOrders[0].id));
 			}
 		}
 	};

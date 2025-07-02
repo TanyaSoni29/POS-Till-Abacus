@@ -96,7 +96,7 @@ export const OrderPanel = ({
 			<div className='p-4 border-b border-gray-200'>
 				<h3 className='text-sm font-semibold text-gray-700 mb-2'>Customer</h3>
 				<div className='relative'>
-					<button
+					<div
 						onClick={() => setIsCustomerDropdownOpen(!isCustomerDropdownOpen)}
 						className='w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors'
 					>
@@ -117,7 +117,7 @@ export const OrderPanel = ({
 								}`}
 							/>
 						</div>
-					</button>
+					</div>
 
 					{isCustomerDropdownOpen && (
 						<div className='absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-48 overflow-y-auto'>
