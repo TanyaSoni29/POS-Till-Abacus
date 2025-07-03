@@ -3,16 +3,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-	orders: [
-		{
-			id: 1,
-			// customer: customers[0],
-			items: [],
-			createdAt: new Date().toISOString(),
-		},
-	],
-	activeOrderId: 1,
-	nextOrderId: 2,
+	orders: [],
+	activeOrderId: 0,
+	nextOrderId: 1,
 };
 
 const orderSlice = createSlice({

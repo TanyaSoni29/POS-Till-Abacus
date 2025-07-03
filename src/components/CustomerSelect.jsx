@@ -24,11 +24,11 @@ export const CustomerSelect = ({
 					<p className='font-medium text-gray-900'>
 						{selectedCustomer ? selectedCustomer.firstname : 'Select Customer'}
 					</p>
-					{/* {selectedCustomer && selectedCustomer.loyaltyPoints !== undefined && (
+					{selectedCustomer && selectedCustomer.loyaltyPoints !== undefined && (
 						<p className='text-sm text-gray-600'>
 							{selectedCustomer.loyaltyPoints} points
 						</p>
-					)} */}
+					)}
 				</div>
 				<ChevronDown
 					size={16}
@@ -54,7 +54,9 @@ export const CustomerSelect = ({
 								className='text-gray-400'
 							/>
 							<div className='flex-1'>
-								<p className='font-medium text-gray-900'>{customer?.firstname}</p>
+								<p className='font-medium text-gray-900'>
+									{customer?.firstname}
+								</p>
 								{customer?.email && (
 									<p className='text-sm text-gray-600'>{customer?.email}</p>
 								)}

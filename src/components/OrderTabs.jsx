@@ -92,7 +92,7 @@ export const OrderTabs = () => {
 											isActive ? 'text-blue-900' : 'text-gray-700'
 										}`}
 									>
-										{/* {order.customer.name} */}
+										{order.customer?.firstname}
 									</p>
 									<div className='flex items-center gap-2 text-xs'>
 										<span

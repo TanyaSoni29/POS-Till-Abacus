@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { getCustomers } from '../services/operations/customersApi';
 
 const initialState = {
-	customers: [{ id: '1', name: 'Walk-in Customer', loyaltyPoints: 0 }],
+	customers: [],
 };
 
 const customerSlice = createSlice({
@@ -22,7 +22,12 @@ export function refreshCustomers() {
 		try {
 			const response = await getCustomers();
 			if (response.status === 'success') {
-				dispatch(setCustomers(response.data));
+				dispatch(
+					setCustomers([
+						{ id: '0', firstname: 'Walk-in Customer', loyaltyPoints: 0 },
+						...response.data,
+					])
+				);
 			}
 		} catch (err) {
 			console.error('Error refreshing customers:', err);

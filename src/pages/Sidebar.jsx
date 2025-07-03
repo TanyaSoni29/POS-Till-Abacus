@@ -48,8 +48,6 @@ export default function Sidebar() {
 		updateOrder(activeOrderId, { items: newItems });
 	};
 
-	
-
 	const handlePaymentComplete = () => {
 		// Clear the current order after payment
 		updateOrder(activeOrderId, { items: [] });
@@ -69,7 +67,18 @@ export default function Sidebar() {
 		dispatch(refreshCustomers());
 	}, [dispatch]);
 
-	
+	useEffect(() => {
+		dispatch(
+			setOrders([
+				{
+					id: 0,
+					customer: customers[0],
+					items: [],
+					createdAt: new Date().toISOString(),
+				},
+			])
+		);
+	}, [customers, dispatch]);
 
 	return (
 		<div className='w-96 bg-white border-l border-gray-200'>
