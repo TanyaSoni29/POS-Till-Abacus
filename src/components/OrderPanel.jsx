@@ -14,6 +14,7 @@ import {
 	Loader,
 } from 'lucide-react';
 import CustomerSection from './OrderPanel/CustomerSection';
+import { paymentMethods } from '../assets/data/paymentMethods';
 
 export const OrderPanel = ({
 	cartItems,
@@ -22,7 +23,6 @@ export const OrderPanel = ({
 	onSelectCustomer,
 	onUpdateQuantity,
 	onRemoveItem,
-	paymentMethods,
 	onPaymentComplete,
 	onClearCart,
 }) => {

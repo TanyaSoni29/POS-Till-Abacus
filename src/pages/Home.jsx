@@ -29,6 +29,7 @@ export default function Home() {
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const activeOrder = orders.find((order) => order.id === activeOrderId);
+	console.log({ activeOrderId, activeOrder });
 	// Filter products based on search and category
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
@@ -77,30 +78,6 @@ export default function Home() {
 			(item) => item.product.id === productId
 		);
 		return item ? item.quantity : 0;
-	};
-
-	const updateCartQuantity = (product, quantity) => {
-		if (!activeOrder) return;
-
-		let newItems;
-		if (quantity <= 0) {
-			newItems = activeOrder.items.filter(
-				(item) => item.product.id !== product.id
-			);
-		} else {
-			const existingItem = activeOrder.items.find(
-				(item) => item.product.id === product.id
-			);
-			if (existingItem) {
-				newItems = activeOrder.items.map((item) =>
-					item.product.id === product.id ? { ...item, quantity } : item
-				);
-			} else {
-				newItems = [...activeOrder.items, { product, quantity }];
-			}
-		}
-
-		updateOrder(activeOrderId, { items: newItems });
 	};
 
 	return (
@@ -154,9 +131,9 @@ export default function Home() {
 						<ProductCard
 							key={product.id}
 							product={product}
+							activeOrder={activeOrder}
 							onAddToCart={addToCart}
 							cartQuantity={getCartQuantity(product.id)}
-							onUpdateQuantity={updateCartQuantity}
 						/>
 					))}
 				</div>

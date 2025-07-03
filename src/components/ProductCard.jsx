@@ -2,20 +2,36 @@
 
 import React from 'react';
 import { Plus, Minus } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import {
+	decreaseOrderItemQuantity,
+	increaseOrderItemQuantity,
+} from '../slices/orderSlice';
 
 export const ProductCard = ({
 	product,
+	activeOrder,
 	onAddToCart,
 	cartQuantity,
-	onUpdateQuantity,
 }) => {
+	const dispatch = useDispatch();
 	const handleIncrement = () => {
-		onUpdateQuantity(product, cartQuantity + 1);
+		dispatch(
+			increaseOrderItemQuantity({
+				orderId: activeOrder?.id,
+				productId: product.id,
+			})
+		);
 	};
 
 	const handleDecrement = () => {
 		if (cartQuantity > 0) {
-			onUpdateQuantity(product, cartQuantity - 1);
+			dispatch(
+				decreaseOrderItemQuantity({
+					orderId: activeOrder?.id,
+					productId: product.id,
+				})
+			);
 		}
 	};
 

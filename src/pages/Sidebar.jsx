@@ -84,7 +84,6 @@ export default function Sidebar() {
 					onSelectCustomer={selectCustomer}
 					onUpdateQuantity={updateCartQuantityById}
 					onRemoveItem={removeFromCart}
-					// paymentMethods={paymentMethods}
 					onPaymentComplete={handlePaymentComplete}
 					onClearCart={clearCart}
 				/>

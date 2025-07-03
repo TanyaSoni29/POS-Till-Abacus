@@ -34,6 +34,40 @@ const orderSlice = createSlice({
 				};
 			}
 		},
+		increaseOrderItemQuantity(state, action) {
+			const { orderId, productId } = action.payload;
+			const orderIndex = state.orders.findIndex(
+				(order) => order.id === orderId
+			);
+			if (orderIndex !== -1) {
+				const item = state.orders[orderIndex].items.find(
+					(item) => item.product.id === productId
+				);
+				if (item) {
+					item.quantity++;
+				}
+			}
+		},
+		decreaseOrderItemQuantity(state, action) {
+			const { orderId, productId } = action.payload;
+			const orderIndex = state.orders.findIndex(
+				(order) => order.id === orderId
+			);
+			if (orderIndex !== -1) {
+				const item = state.orders[orderIndex].items.find(
+					(item) => item.product.id === productId
+				);
+				if (item) {
+					item.quantity--;
+					if (item.quantity <= 0) {
+						// Remove item if quantity is 0 or less
+						state.orders[orderIndex].items = state.orders[
+							orderIndex
+						].items.filter((i) => i.product.id !== productId);
+					}
+				}
+			}
+		},
 	},
 });
 
@@ -50,6 +84,13 @@ const orderSlice = createSlice({
 // 	};
 // }
 
-export const { setOrders, setActiveOrderId, setNextOrderId, addOrder, updateOrder } =
-	orderSlice.actions;
+export const {
+	setOrders,
+	setActiveOrderId,
+	setNextOrderId,
+	addOrder,
+	updateOrder,
+	increaseOrderItemQuantity,
+	decreaseOrderItemQuantity,
+} = orderSlice.actions;
 export default orderSlice.reducer;
