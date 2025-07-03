@@ -102,9 +102,17 @@ export default function CustomerSection({
 										size={16}
 										className='text-grey-700'
 									/>
-									<p className='font-medium text-gray-900'>
-										{customer?.firstname}
-									</p>
+									<div>
+										<p className='font-medium text-gray-900'>
+											{customer?.firstname}
+										</p>
+										{customer?.email && (
+											<p className='text-grey-700'>{customer?.email}</p>
+										)}
+										{customer?.loyaltyNo && (
+											<p className='text-blue-500'>{customer?.loyaltyNo}</p>
+										)}
+									</div>
 								</div>
 
 								{customer.loyaltyPoints > 0 && (
