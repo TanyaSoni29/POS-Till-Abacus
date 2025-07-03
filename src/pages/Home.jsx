@@ -148,7 +148,7 @@ export default function Home() {
 			</div>
 
 			{/* Products Grid */}
-			<div className='flex-1 px-6 pb-6'>
+			<div className='flex-1 px-6 pb-6 overflow-y-auto max-h-[39rem]'>
 				<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
 					{filteredProducts.map((product) => (
 						<ProductCard

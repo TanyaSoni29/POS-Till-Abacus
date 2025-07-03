@@ -1,8 +1,7 @@
 /** @format */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
-	ChevronDown,
 	Plus,
 	Minus,
 	Trash2,
@@ -14,6 +13,7 @@ import {
 	CheckCircle,
 	Loader,
 } from 'lucide-react';
+import CustomerSection from './OrderPanel/CustomerSection';
 
 export const OrderPanel = ({
 	cartItems,
@@ -26,7 +26,6 @@ export const OrderPanel = ({
 	onPaymentComplete,
 	onClearCart,
 }) => {
-	const [isCustomerDropdownOpen, setIsCustomerDropdownOpen] = useState(false);
 	const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [isComplete, setIsComplete] = useState(false);
@@ -93,57 +92,11 @@ export const OrderPanel = ({
 	return (
 		<div className='h-full flex flex-col'>
 			{/* Customer Section */}
-			<div className='p-4 border-b border-gray-200'>
-				<h3 className='text-sm font-semibold text-gray-700 mb-2'>Customer</h3>
-				<div className='relative'>
-					<div
-						onClick={() => setIsCustomerDropdownOpen(!isCustomerDropdownOpen)}
-						className='w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors'
-					>
-						<span className='font-medium text-gray-900'>
-							{selectedCustomer?.firstname}
-						</span>
-						<div className='flex items-center gap-2'>
-							<button className='p-1 hover:bg-gray-100 rounded'>
-								<Plus
-									size={16}
-									className='text-gray-600'
-								/>
-							</button>
-							<ChevronDown
-								size={16}
-								className={`text-gray-400 transition-transform ${
-									isCustomerDropdownOpen ? 'rotate-180' : ''
-								}`}
-							/>
-						</div>
-					</div>
-
-					{isCustomerDropdownOpen && (
-						<div className='absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-48 overflow-y-auto'>
-							{customers.map((customer) => (
-								<button
-									key={customer.id}
-									onClick={() => {
-										onSelectCustomer(customer);
-										setIsCustomerDropdownOpen(false);
-									}}
-									className='w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0'
-								>
-									<p className='font-medium text-gray-900'>
-										{customer?.firstname}
-									</p>
-									{/* {customer.loyaltyPoints > 0 && (
-										<p className='text-sm text-gray-600'>
-											{customer.loyaltyPoints} points
-										</p>
-									)} */}
-								</button>
-							))}
-						</div>
-					)}
-				</div>
-			</div>
+			<CustomerSection
+				selectedCustomer={selectedCustomer}
+				onSelectCustomer={onSelectCustomer}
+				customers={customers}
+			/>
 
 			{/* Order Items */}
 			<div className='flex-1 overflow-hidden flex flex-col'>

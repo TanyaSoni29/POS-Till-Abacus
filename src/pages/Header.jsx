@@ -16,6 +16,14 @@ export default function Header() {
 						<h1 className='text-xl font-bold text-gray-900'>EPOS System</h1>
 						<p className='text-sm text-gray-600'>Store #001</p>
 					</div>
+					<div className='flex items-center gap-2'>
+						<button className='bg-gradient-to-r from-blue-500 to-purple-600 px-2 py-2 text-white rounded-lg text-sm font-semibold'>
+							Retail
+						</button>
+						<button className='bg-gradient-to-r from-blue-500 to-purple-600 px-2 py-2 text-white rounded-lg text-sm font-semibold'>
+							Hospitality
+						</button>
+					</div>
 				</div>
 				<div className='flex items-center gap-4'>
 					<div className='flex items-center gap-2 text-gray-600'>
