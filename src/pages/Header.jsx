@@ -1,7 +1,10 @@
 /** @format */
 
 import StoreMallDirectoryOutlinedIcon from '@mui/icons-material/StoreMallDirectoryOutlined';
+import { useDispatch } from 'react-redux';
+import { setActivePanel } from '../slices/settingSlice';
 export default function Header() {
+	const dispatch = useDispatch();
 	return (
 		<div className='bg-white shadow-sm border-b border-gray-200 px-6 py-4'>
 			<div className='flex items-center justify-between'>
@@ -17,10 +20,16 @@ export default function Header() {
 						<p className='text-sm text-gray-600'>Store #001</p>
 					</div>
 					<div className='flex items-center gap-2'>
-						<button className='bg-gradient-to-r from-blue-500 to-purple-600 px-2 py-2 text-white rounded-lg text-sm font-semibold'>
+						<button
+							className='bg-gradient-to-r from-blue-500 to-purple-600 px-2 py-2 text-white rounded-lg text-sm font-semibold'
+							onClick={() => dispatch(setActivePanel('retail'))}
+						>
 							Retail
 						</button>
-						<button className='bg-gradient-to-r from-blue-500 to-purple-600 px-2 py-2 text-white rounded-lg text-sm font-semibold'>
+						<button
+							className='bg-gradient-to-r from-blue-500 to-purple-600 px-2 py-2 text-white rounded-lg text-sm font-semibold'
+							onClick={() => dispatch(setActivePanel('hospitality'))}
+						>
 							Hospitality
 						</button>
 					</div>

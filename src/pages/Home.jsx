@@ -21,6 +21,7 @@ const getCategoryColor = (category) => {
 };
 export default function Home() {
 	const dispatch = useDispatch();
+	const { activePanel } = useSelector((state) => state.setting);
 	const { categories, selectedCategory } = useSelector(
 		(state) => state.category
 	);
@@ -108,53 +109,90 @@ export default function Home() {
 				</div>
 
 				<div className='flex gap-2 overflow-x-auto pb-2'>
-					{categories.map((category) => (
-						<button
-							key={category}
-							onClick={() => dispatch(setSelectedCategory(category))}
-							className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
-								selectedCategory === category
-									? `text-white ${getCategoryColor(category)}`
-									: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-							}`}
-						>
-							{category}
-						</button>
-					))}
+					{activePanel === 'hospitality' &&
+						categories.map((category) => (
+							<button
+								key={category}
+								onClick={() => dispatch(setSelectedCategory(category))}
+								className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
+									selectedCategory === category
+										? `text-white ${getCategoryColor(category)}`
+										: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+								}`}
+							>
+								{category}
+							</button>
+						))}
 				</div>
 			</div>
 
 			{/* Products Grid */}
-			<div className='flex-1 px-6 pb-6 overflow-y-auto max-h-[39rem]'>
-				<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-					{filteredProducts.map((product) => (
-						<ProductCard
-							key={product.id}
-							product={product}
-							activeOrder={activeOrder}
-							onAddToCart={addToCart}
-							cartQuantity={getCartQuantity(product.id)}
-						/>
-					))}
-				</div>
-
-				{filteredProducts.length === 0 && (
-					<div className='text-center py-12'>
-						<div className='text-gray-400 mb-4'>
-							<Search
-								size={48}
-								className='mx-auto'
+			{activePanel === 'hospitality' && (
+				<div className='flex-1 px-6 pb-6 overflow-y-auto max-h-[39rem]'>
+					<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+						{filteredProducts.map((product) => (
+							<ProductCard
+								key={product.id}
+								product={product}
+								activeOrder={activeOrder}
+								onAddToCart={addToCart}
+								cartQuantity={getCartQuantity(product.id)}
 							/>
-						</div>
-						<h3 className='text-lg font-semibold text-gray-600 mb-2'>
-							No products found
-						</h3>
-						<p className='text-gray-500'>
-							Try adjusting your search or filter criteria
-						</p>
+						))}
 					</div>
-				)}
-			</div>
+
+					{filteredProducts.length === 0 && (
+						<div className='text-center py-12'>
+							<div className='text-gray-400 mb-4'>
+								<Search
+									size={48}
+									className='mx-auto'
+								/>
+							</div>
+							<h3 className='text-lg font-semibold text-gray-600 mb-2'>
+								No products found
+							</h3>
+							<p className='text-gray-500'>
+								Try adjusting your search or filter criteria
+							</p>
+						</div>
+					)}
+				</div>
+			)}
+
+			{/* Retail Product Grid */}
+			{activePanel === 'retail' && (
+				<div className='flex-1 px-6 pb-6 overflow-y-auto max-h-[39rem]'>
+					<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+						{filteredProducts.map((product) => (
+							<ProductCard
+								key={product.id}
+								product={product}
+								activeOrder={activeOrder}
+								onAddToCart={addToCart}
+								cartQuantity={getCartQuantity(product.id)}
+							/>
+						))}
+					</div>
+
+					{filteredProducts.length === 0 && (
+						<div className='text-center py-12'>
+							<div className='text-gray-400 mb-4'>
+								<Search
+									size={48}
+									className='mx-auto'
+								/>
+							</div>
+							<h3 className='text-lg font-semibold text-gray-600 mb-2'>
+								No products found
+							</h3>
+							<p className='text-gray-500'>
+								Try adjusting your search or filter criteria
+							</p>
+						</div>
+					)}
+				</div>
+			)}
 		</>
 	);
 }
