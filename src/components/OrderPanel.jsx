@@ -233,7 +233,7 @@ export const OrderPanel = ({
 						Payment Method
 					</h3>
 					<div className='grid grid-cols-2 gap-2 mb-4'>
-						{paymentMethods.slice(0, 2).map((method) => (
+						{paymentMethods?.slice(0, 2).map((method) => (
 							<button
 								key={method.id}
 								onClick={() => setSelectedPaymentMethod(method)}

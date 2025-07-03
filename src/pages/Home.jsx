@@ -5,7 +5,7 @@ import { OrderTabs } from '../components/OrderTabs';
 import { Search, Scan } from 'lucide-react';
 import { setSelectedCategory } from '../slices/categorySlice';
 import { useMemo, useState } from 'react';
-import { setOrders } from '../slices/orderSlice';
+import { updateOrder } from '../slices/orderSlice';
 import { ProductCard } from '../components/ProductCard';
 
 const getCategoryColor = (category) => {
@@ -41,17 +41,16 @@ export default function Home() {
 		});
 	}, [products, searchQuery, selectedCategory]);
 
-	const updateOrder = (orderId, updates) => {
+	const updateOrderInStore = (orderId, updates) => {
 		dispatch(
-			setOrders((prev) =>
-				prev.map((order) =>
-					order.id === orderId ? { ...order, ...updates } : order
-				)
+			updateOrder(
+				{ id: orderId, updates } // Use object destructuring for clarity
 			)
 		);
 	};
 
 	const addToCart = (product) => {
+		console.log(product);
 		if (!activeOrder) return;
 
 		const existingItem = activeOrder.items.find(
@@ -69,7 +68,7 @@ export default function Home() {
 			newItems = [...activeOrder.items, { product, quantity: 1 }];
 		}
 
-		updateOrder(activeOrderId, { items: newItems });
+		updateOrderInStore(activeOrderId, { items: newItems });
 	};
 
 	const getCartQuantity = (productId) => {

@@ -24,6 +24,16 @@ const orderSlice = createSlice({
 		setNextOrderId(state, action) {
 			state.nextOrderId = action.payload;
 		},
+		updateOrder(state, action) {
+			const { id, updates } = action.payload;
+			const index = state.orders.findIndex((order) => order.id === id);
+			if (index !== -1) {
+				state.orders[index] = {
+					...state.orders[index],
+					...updates,
+				};
+			}
+		},
 	},
 });
 
@@ -40,6 +50,6 @@ const orderSlice = createSlice({
 // 	};
 // }
 
-export const { setOrders, setActiveOrderId, setNextOrderId, addOrder } =
+export const { setOrders, setActiveOrderId, setNextOrderId, addOrder, updateOrder } =
 	orderSlice.actions;
 export default orderSlice.reducer;

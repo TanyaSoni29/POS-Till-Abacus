@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { refreshCustomers } from '../slices/customerSlice';
 import { OrderPanel } from '../components/OrderPanel';
-import { setOrders } from '../slices/orderSlice';
+import { setOrders, updateOrder } from '../slices/orderSlice';
 
 export default function Sidebar() {
 	const dispatch = useDispatch();
@@ -12,14 +12,8 @@ export default function Sidebar() {
 	const { activeOrderId, orders } = useSelector((state) => state.order);
 	const activeOrder = orders.find((order) => order.id === activeOrderId);
 
-	const updateOrder = (orderId, updates) => {
-		dispatch(
-			setOrders((prev) =>
-				prev.map((order) =>
-					order.id === orderId ? { ...order, ...updates } : order
-				)
-			)
-		);
+	const updateOrderInStore = (orderId, updates) => {
+		dispatch(updateOrder({ id: orderId, updates }));
 	};
 
 	const updateCartQuantityById = (productId, quantity) => {
@@ -45,22 +39,22 @@ export default function Sidebar() {
 		const newItems = activeOrder.items.filter(
 			(item) => item.product.id !== productId
 		);
-		updateOrder(activeOrderId, { items: newItems });
+		updateOrderInStore(activeOrderId, { items: newItems });
 	};
 
 	const handlePaymentComplete = () => {
 		// Clear the current order after payment
-		updateOrder(activeOrderId, { items: [] });
+		updateOrderInStore(activeOrderId, { items: [] });
 	};
 
 	const clearCart = () => {
 		if (!activeOrder) return;
-		updateOrder(activeOrderId, { items: [] });
+		updateOrderInStore(activeOrderId, { items: [] });
 	};
 
 	const selectCustomer = (customer) => {
 		if (!activeOrder) return;
-		updateOrder(activeOrderId, { customer });
+		updateOrderInStore(activeOrderId, { customer });
 	};
 
 	useEffect(() => {
