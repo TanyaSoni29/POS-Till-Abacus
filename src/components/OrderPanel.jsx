@@ -10,22 +10,28 @@ import {
 	Smartphone,
 	Pause,
 	X,
-	CheckCircle,
 	Loader,
 } from 'lucide-react';
 import CustomerSection from './OrderPanel/CustomerSection';
 import { paymentMethods } from '../assets/data/paymentMethods';
+import ThankYou from './OrderPanel/ThankYou';
+import {
+	decreaseOrderItemQuantity,
+	increaseOrderItemQuantity,
+} from '../slices/orderSlice';
+import { useDispatch } from 'react-redux';
 
 export const OrderPanel = ({
+	activeOrder,
 	cartItems,
 	customers,
 	selectedCustomer,
 	onSelectCustomer,
-	onUpdateQuantity,
 	onRemoveItem,
 	onPaymentComplete,
 	onClearCart,
 }) => {
+	const dispatch = useDispatch();
 	const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [isComplete, setIsComplete] = useState(false);
@@ -73,20 +79,7 @@ export const OrderPanel = ({
 	};
 
 	if (isComplete) {
-		return (
-			<div className='h-full flex items-center justify-center p-8'>
-				<div className='text-center'>
-					<CheckCircle
-						className='mx-auto text-green-500 mb-4'
-						size={64}
-					/>
-					<h2 className='text-2xl font-bold text-gray-900 mb-2'>
-						Payment Successful!
-					</h2>
-					<p className='text-gray-600'>Thank you for your purchase</p>
-				</div>
-			</div>
-		);
+		return <ThankYou />;
 	}
 
 	return (
@@ -127,7 +120,12 @@ export const OrderPanel = ({
 									<div className='flex items-center gap-2'>
 										<button
 											onClick={() =>
-												onUpdateQuantity(item.product.id, item.quantity - 1)
+												dispatch(
+													decreaseOrderItemQuantity({
+														orderId: activeOrder?.id,
+														productId: item.product.id,
+													})
+												)
 											}
 											className='w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center'
 										>
@@ -138,7 +136,12 @@ export const OrderPanel = ({
 										</span>
 										<button
 											onClick={() =>
-												onUpdateQuantity(item.product.id, item.quantity + 1)
+												dispatch(
+													increaseOrderItemQuantity({
+														orderId: activeOrder?.id,
+														productId: item.product.id,
+													})
+												)
 											}
 											className='w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center'
 										>

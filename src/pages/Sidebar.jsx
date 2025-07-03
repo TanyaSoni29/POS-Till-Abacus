@@ -16,23 +16,6 @@ export default function Sidebar() {
 		dispatch(updateOrder({ id: orderId, updates }));
 	};
 
-	const updateCartQuantityById = (productId, quantity) => {
-		if (!activeOrder) return;
-
-		let newItems;
-		if (quantity <= 0) {
-			newItems = activeOrder.items.filter(
-				(item) => item.product.id !== productId
-			);
-		} else {
-			newItems = activeOrder.items.map((item) =>
-				item.product.id === productId ? { ...item, quantity } : item
-			);
-		}
-
-		updateOrder(activeOrderId, { items: newItems });
-	};
-
 	const removeFromCart = (productId) => {
 		if (!activeOrder) return;
 
@@ -78,11 +61,11 @@ export default function Sidebar() {
 		<div className='w-96 bg-white border-l border-gray-200'>
 			{activeOrder && (
 				<OrderPanel
+					activeOrder={activeOrder}
 					cartItems={activeOrder.items}
 					customers={customers}
 					selectedCustomer={activeOrder.customer}
 					onSelectCustomer={selectCustomer}
-					onUpdateQuantity={updateCartQuantityById}
 					onRemoveItem={removeFromCart}
 					onPaymentComplete={handlePaymentComplete}
 					onClearCart={clearCart}
