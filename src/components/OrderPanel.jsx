@@ -11,6 +11,7 @@ import {
 	Pause,
 	X,
 	Loader,
+	ChevronDown,
 } from 'lucide-react';
 import CustomerSection from './OrderPanel/CustomerSection';
 import { paymentMethods } from '../assets/data/paymentMethods';
@@ -35,6 +36,10 @@ export const OrderPanel = ({
 	const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [isComplete, setIsComplete] = useState(false);
+	const [isDiscountOpen, setIsDiscountOpen] = useState({
+		itemId: null,
+		open: false,
+	});
 
 	const subtotal = cartItems.reduce(
 		(sum, item) => sum + item.product.price * item.quantity,
@@ -105,59 +110,144 @@ export const OrderPanel = ({
 					) : (
 						<div className='space-y-3'>
 							{cartItems.map((item) => (
-								<div
-									key={item.product.id}
-									className='flex items-center justify-between'
-								>
-									<div className='flex-1'>
-										<h4 className='font-medium text-gray-900'>
-											{item.product.name}
-										</h4>
-										<p className='text-sm text-gray-600'>
-											${item.product.price.toFixed(2)} each
-										</p>
-									</div>
-									<div className='flex items-center gap-2'>
-										<button
-											onClick={() =>
-												dispatch(
-													decreaseOrderItemQuantity({
-														orderId: activeOrder?.id,
-														productId: item.product.id,
+								<>
+									<div
+										key={item.product.id}
+										className='flex items-center justify-between'
+									>
+										<div className='flex-1'>
+											<h4 className='font-medium text-gray-900'>
+												{item.product.name}
+											</h4>
+											<p className='text-sm text-gray-600'>
+												${item.product.price.toFixed(2)} each
+											</p>
+										</div>
+										<div className='flex items-center gap-2'>
+											<button
+												onClick={() =>
+													dispatch(
+														decreaseOrderItemQuantity({
+															orderId: activeOrder?.id,
+															productId: item.product.id,
+														})
+													)
+												}
+												className='w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center'
+											>
+												<Minus size={12} />
+											</button>
+											<span className='w-8 text-center font-medium'>
+												{item.quantity}
+											</span>
+											<button
+												onClick={() =>
+													dispatch(
+														increaseOrderItemQuantity({
+															orderId: activeOrder?.id,
+															productId: item.product.id,
+														})
+													)
+												}
+												className='w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center'
+											>
+												<Plus size={12} />
+											</button>
+											<span className='w-16 text-right font-medium'>
+												${(item.product.price * item.quantity).toFixed(2)}
+											</span>
+											<span
+												onClick={() =>
+													setIsDiscountOpen({
+														itemId: item.product.id,
+														open: !(
+															isDiscountOpen.open &&
+															isDiscountOpen.itemId === item.product.id
+														),
 													})
-												)
-											}
-											className='w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center'
-										>
-											<Minus size={12} />
-										</button>
-										<span className='w-8 text-center font-medium'>
-											{item.quantity}
-										</span>
-										<button
-											onClick={() =>
-												dispatch(
-													increaseOrderItemQuantity({
-														orderId: activeOrder?.id,
-														productId: item.product.id,
-													})
-												)
-											}
-											className='w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center'
-										>
-											<Plus size={12} />
-										</button>
-										<span className='w-16 text-right font-medium'>
-											${(item.product.price * item.quantity).toFixed(2)}
-										</span>
-										<button
-											onClick={() => onRemoveItem(item.product.id)}
-											className='w-6 h-6 rounded bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center'
-										>
-											<Trash2 size={12} />
-										</button>
+												}
+												className='cursor-pointer'
+											>
+												<ChevronDown
+													size={16}
+													className={`text-gray-400 transition-transform ${
+														isDiscountOpen.itemId === item.product.id &&
+														isDiscountOpen.open
+															? 'rotate-180'
+															: ''
+													}`}
+												/>
+											</span>
+											<button
+												onClick={() => onRemoveItem(item.product.id)}
+												className='w-6 h-6 rounded bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center'
+											>
+												<Trash2 size={12} />
+											</button>
+										</div>
 									</div>
-								</div>
+
+									{isDiscountOpen.itemId === item.product.id &&
+										isDiscountOpen.open && (
+											<div className='border border-gray-100 rounded-lg  w-full transition-all ease-in-out duration-200'>
+												<div className='flex flex-col items-center justify-between bg-gray-100 px-4 pt-4 pb-2'>
+													<div className='grid grid-cols-2 gap-4'>
+														<div>
+															<h4 className='font-medium text-sm text-gray-900 mb-2'>
+																Change Price
+															</h4>
+															<input
+																type='number'
+																placeholder='Enter discount code'
+																defaultValue={item.product.price.toFixed(2)}
+																className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
+															/>
+														</div>
+														<div>
+															<h4 className='font-medium text-sm text-gray-900 mb-2'>
+																Discount %
+															</h4>
+															<input
+																type='number'
+																placeholder='Enter discount code'
+																defaultValue={0}
+																className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
+															/>
+														</div>
+													</div>
+													<div className='w-full'>
+														<h4 className='font-medium text-sm text-gray-900 mb-2'>
+															Add Note
+														</h4>
+														<input
+															type='text'
+															placeholder='Special instructions...'
+															className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
+														/>
+													</div>
+													<div className='grid grid-cols-2 gap-4 w-full'>
+														<button className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm'>
+															Reset Price
+														</button>
+														<button className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm'>
+															Clear Discount
+														</button>
+													</div>
+												</div>
+
+												<div className='text-sm text-gray-600 bg-white p-4 divide-y divide-gray-200'>
+													<div className='flex justify-between items-center gap-2'>
+														<p>Base: 1 X $4.00</p>
+														<p>$4.00</p>
+													</div>
+													<div className='flex justify-between items-center gap-2 font-medium text-gray-800'>
+														<p>Item Total</p>
+														<p>$4.00</p>
+													</div>
+												</div>
+											</div>
+										)}
+								</>
 							))}
 						</div>
 					)}

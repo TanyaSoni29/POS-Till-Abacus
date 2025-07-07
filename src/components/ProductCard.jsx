@@ -1,6 +1,5 @@
 /** @format */
 
-import React from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import {

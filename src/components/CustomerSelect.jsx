@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { User, ChevronDown, Users } from 'lucide-react';
 
 export const CustomerSelect = ({
