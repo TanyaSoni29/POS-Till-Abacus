@@ -123,6 +123,20 @@ export default function Home() {
 								{category}
 							</button>
 						))}
+					{activePanel === 'retail' &&
+						categories.map((category) => (
+							<button
+								key={category}
+								onClick={() => dispatch(setSelectedCategory(category))}
+								className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
+									selectedCategory === category
+										? `text-white ${getCategoryColor(category)}`
+										: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+								}`}
+							>
+								{category}
+							</button>
+						))}
 				</div>
 			</div>
 
