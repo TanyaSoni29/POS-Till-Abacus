@@ -19,6 +19,7 @@ import ThankYou from './OrderPanel/ThankYou';
 import {
 	decreaseOrderItemQuantity,
 	increaseOrderItemQuantity,
+	updateOrder,
 } from '../slices/orderSlice';
 import { useDispatch } from 'react-redux';
 
@@ -83,6 +84,33 @@ export const OrderPanel = ({
 			default:
 				return <CreditCard size={20} />;
 		}
+	};
+
+	const UpdateOrderPrices = (product) => {
+		if (!activeOrder) return;
+
+		const existingItem = activeOrder.items.find(
+			(item) => item.product.id === product.id
+		);
+		let newItems;
+
+		if (existingItem) {
+			newItems = activeOrder.items.map((item) =>
+				item.product.id === product.id
+					? {
+							...item,
+							product: {
+								...item.product,
+								price: changePrices[product.id] || item.product.price,
+							},
+					  }
+					: item
+			);
+		} else {
+			newItems = [...activeOrder.items, { product, quantity: 1 }];
+		}
+
+		dispatch(updateOrder({ id: activeOrder.id, updates: { items: newItems } }));
 	};
 
 	if (isComplete) {
@@ -213,6 +241,9 @@ export const OrderPanel = ({
 																		[item.product.id]: Number(e.target.value),
 																	}))
 																}
+																onBlur={() => {
+																	UpdateOrderPrices(item.product);
+																}}
 															/>
 														</div>
 														<div>
@@ -277,12 +308,21 @@ export const OrderPanel = ({
 
 												<div className='text-sm text-gray-600 bg-white p-4 divide-y divide-gray-200'>
 													<div className='flex justify-between items-center gap-2'>
-														<p>Base: 1 X $4.00</p>
-														<p>$4.00</p>
+														<p>
+															Base: {item.quantity} X{' '}
+															{item.product.price.toFixed(2)}
+														</p>
+														<p>
+															$
+															{(item.quantity * item.product.price)?.toFixed(2)}
+														</p>
 													</div>
 													<div className='flex justify-between items-center gap-2 font-medium text-gray-800'>
 														<p>Item Total</p>
-														<p>$4.00</p>
+														<p>
+															$
+															{(item.quantity * item.product.price)?.toFixed(2)}
+														</p>
 													</div>
 												</div>
 											</div>
