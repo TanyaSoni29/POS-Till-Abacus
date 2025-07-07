@@ -40,6 +40,8 @@ export const OrderPanel = ({
 		itemId: null,
 		open: false,
 	});
+	const [changePrices, setChangePrices] = useState({});
+	const [discounts, setDiscounts] = useState({});
 
 	const subtotal = cartItems.reduce(
 		(sum, item) => sum + item.product.price * item.quantity,
@@ -201,6 +203,16 @@ export const OrderPanel = ({
 																placeholder='Enter discount code'
 																defaultValue={item.product.price.toFixed(2)}
 																className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
+																value={
+																	changePrices[item.product.id] ??
+																	item.product.price
+																}
+																onChange={(e) =>
+																	setChangePrices((changePrices) => ({
+																		...changePrices,
+																		[item.product.id]: Number(e.target.value),
+																	}))
+																}
 															/>
 														</div>
 														<div>
@@ -212,6 +224,16 @@ export const OrderPanel = ({
 																placeholder='Enter discount code'
 																defaultValue={0}
 																className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
+																value={
+																	discounts[item.product.id] ??
+																	item.product.discount
+																}
+																onChange={(e) =>
+																	setDiscounts((discounts) => ({
+																		...discounts,
+																		[item.product.id]: Number(e.target.value),
+																	}))
+																}
 															/>
 														</div>
 													</div>
@@ -226,10 +248,28 @@ export const OrderPanel = ({
 														/>
 													</div>
 													<div className='grid grid-cols-2 gap-4 w-full'>
-														<button className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm'>
+														<button
+															className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer'
+															onClick={() =>
+																setChangePrices((changePrices) => ({
+																	...changePrices,
+																	[item.product.id]: item.product.price,
+																}))
+															}
+														>
+															{' '}
 															Reset Price
 														</button>
-														<button className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm'>
+														<button
+															className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer'
+															onClick={() =>
+																setDiscounts((prev) => {
+																	const updated = { ...prev };
+																	delete updated[item.product.id];
+																	return updated;
+																})
+															}
+														>
 															Clear Discount
 														</button>
 													</div>
