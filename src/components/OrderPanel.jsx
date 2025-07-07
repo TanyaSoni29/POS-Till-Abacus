@@ -191,7 +191,7 @@ export const OrderPanel = ({
 
 									{isDiscountOpen.itemId === item.product.id &&
 										isDiscountOpen.open && (
-											<div className='border border-gray-100 rounded-lg  w-full transition-all ease-in-out duration-200'>
+											<div className='border border-gray-100 rounded-lg overflow-hidden'>
 												<div className='flex flex-col items-center justify-between bg-gray-100 px-4 pt-4 pb-2'>
 													<div className='grid grid-cols-2 gap-4'>
 														<div>
