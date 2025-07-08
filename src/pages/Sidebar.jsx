@@ -20,7 +20,7 @@ export default function Sidebar() {
 		if (!activeOrder) return;
 
 		const newItems = activeOrder.items.filter(
-			(item) => item.product.id !== productId
+			(item) => item.product.partNumber !== productId
 		);
 		updateOrderInStore(activeOrderId, { items: newItems });
 	};

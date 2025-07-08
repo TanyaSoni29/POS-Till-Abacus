@@ -45,7 +45,10 @@ export const OrderPanel = ({
 	const [discounts, setDiscounts] = useState({});
 
 	const subtotal = cartItems.reduce(
-		(sum, item) => sum + item.product.price * item.quantity,
+		(sum, item) =>
+			sum +
+			(item.product.price ? item.product.price : item.product.promoPrice) *
+				item.quantity,
 		0
 	);
 	const taxRate = 0.085; // 8.5%
@@ -93,16 +96,19 @@ export const OrderPanel = ({
 		if (!activeOrder) return;
 
 		const existingItem = activeOrder.items.find(
-			(item) => item.product.id === product.id
+			(item) => item.product.partNumber === product.partNumber
 		);
 		let newItems;
 		const finalPrice =
-			(changePrices[product.id] || product.price) *
-			(1 - (discounts[product.id] || 0) / 100);
+			(changePrices[product.partNumber] ||
+				product.price ||
+				product.promoPrice ||
+				0) *
+			(1 - (discounts[product.partNumber] || 0) / 100);
 
 		if (existingItem) {
 			newItems = activeOrder.items.map((item) =>
-				item.product.id === product.id
+				item.product.partNumber === product.partNumber
 					? {
 							...item,
 							product: {
@@ -125,22 +131,29 @@ export const OrderPanel = ({
 			];
 		}
 
-		dispatch(updateOrder({ id: activeOrder.id, updates: { items: newItems } }));
+		dispatch(
+			updateOrder({
+				id: activeOrder.id,
+				updates: { items: newItems },
+			})
+		);
 	};
 
 	useEffect(() => {
 		if (isDiscountOpen.open && isDiscountOpen.itemId) {
 			const item = cartItems.find(
-				(i) => i.product.id === isDiscountOpen.itemId
+				(i) => i.product.partNumber === isDiscountOpen.itemId
 			);
 			if (item) {
 				setChangePrices((prev) => ({
 					...prev,
-					[item.product.id]: item.product.price,
+					[item.product.partNumber]: item.product.price
+						? item.product.price
+						: item.product.promoPrice,
 				}));
 				setDiscounts((prev) => ({
 					...prev,
-					[item.product.id]: item.product.discount || 0,
+					[item.product.partNumber]: item.product.discount || 0,
 				}));
 			}
 		}
@@ -175,7 +188,7 @@ export const OrderPanel = ({
 							{cartItems.map((item) => (
 								<>
 									<div
-										key={item.product.id}
+										key={item.product.partNumber}
 										className='flex items-center justify-between'
 									>
 										<div className='flex-1'>
@@ -183,7 +196,11 @@ export const OrderPanel = ({
 												{item.product.partNumber}
 											</h4>
 											<p className='text-sm text-gray-600'>
-												${item?.product?.price?.toFixed(2)} each
+												$
+												{item?.product?.price
+													? item?.product?.price?.toFixed(2)
+													: item?.product?.promoPrice?.toFixed(2)}{' '}
+												each
 											</p>
 										</div>
 										<div className='flex items-center gap-2'>
@@ -192,7 +209,7 @@ export const OrderPanel = ({
 													dispatch(
 														decreaseOrderItemQuantity({
 															orderId: activeOrder?.id,
-															productId: item.product.id,
+															productId: item.product.partNumber,
 														})
 													)
 												}
@@ -208,7 +225,7 @@ export const OrderPanel = ({
 													dispatch(
 														increaseOrderItemQuantity({
 															orderId: activeOrder?.id,
-															productId: item.product.id,
+															productId: item.product.partNumber,
 														})
 													)
 												}
@@ -217,15 +234,20 @@ export const OrderPanel = ({
 												<Plus size={12} />
 											</button>
 											<span className='w-16 text-right font-medium'>
-												${(item.product.price * item.quantity).toFixed(2)}
+												$
+												{(
+													(item.product.price
+														? item.product.price
+														: item.product.promoPrice) * item.quantity
+												).toFixed(2)}
 											</span>
 											<span
 												onClick={() =>
 													setIsDiscountOpen({
-														itemId: item.product.id,
+														itemId: item.product.partNumber,
 														open: !(
 															isDiscountOpen.open &&
-															isDiscountOpen.itemId === item.product.id
+															isDiscountOpen.itemId === item.product.partNumber
 														),
 													})
 												}
@@ -234,7 +256,7 @@ export const OrderPanel = ({
 												<ChevronDown
 													size={16}
 													className={`text-gray-400 transition-transform ${
-														isDiscountOpen.itemId === item.product.id &&
+														isDiscountOpen.itemId === item.product.partNumber &&
 														isDiscountOpen.open
 															? 'rotate-180'
 															: ''
@@ -242,7 +264,7 @@ export const OrderPanel = ({
 												/>
 											</span>
 											<button
-												onClick={() => onRemoveItem(item.product.id)}
+												onClick={() => onRemoveItem(item.product.partNumber)}
 												className='w-6 h-6 rounded bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center'
 											>
 												<Trash2 size={12} />
@@ -250,7 +272,7 @@ export const OrderPanel = ({
 										</div>
 									</div>
 
-									{isDiscountOpen.itemId === item.product.id &&
+									{isDiscountOpen.itemId === item.product.partNumber &&
 										isDiscountOpen.open && (
 											<div className='border border-gray-100 rounded-lg overflow-hidden'>
 												<div className='flex flex-col items-center justify-between bg-gray-100 px-4 pt-4 pb-2'>
@@ -265,13 +287,15 @@ export const OrderPanel = ({
 																placeholder='Enter discount code'
 																className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
 																value={
-																	changePrices[item.product.id] ??
-																	item.product.price
+																	changePrices[item.product.partNumber] ??
+																	(item.product.price
+																		? item.product.price
+																		: item.product.promoPrice)
 																}
 																onChange={(e) =>
 																	setChangePrices((changePrices) => ({
 																		...changePrices,
-																		[item.product.id]: Math.max(
+																		[item.product.partNumber]: Math.max(
 																			0,
 																			Number(e.target.value)
 																		),
@@ -293,13 +317,13 @@ export const OrderPanel = ({
 																placeholder='Enter discount code'
 																className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
 																value={
-																	discounts[item.product.id] ??
+																	discounts[item.product.partNumber] ??
 																	item.product.discount
 																}
 																onChange={(e) =>
 																	setDiscounts((discounts) => ({
 																		...discounts,
-																		[item.product.id]: Math.min(
+																		[item.product.partNumber]: Math.min(
 																			100,
 																			Math.max(0, Number(e.target.value))
 																		),
@@ -327,7 +351,9 @@ export const OrderPanel = ({
 															onClick={() => {
 																setChangePrices((changePrices) => ({
 																	...changePrices,
-																	[item.product.id]: item.product.price,
+																	[item.product.partNumber]: item.product.price
+																		? item.product.price
+																		: item.product.promoPrice,
 																}));
 																UpdateOrderPrices(item.product);
 															}}
@@ -340,7 +366,7 @@ export const OrderPanel = ({
 															onClick={() => {
 																setDiscounts((prev) => ({
 																	...prev,
-																	[item.product.id]: 0,
+																	[item.product.partNumber]: 0,
 																}));
 																UpdateOrderPrices(item.product);
 															}}
@@ -354,18 +380,31 @@ export const OrderPanel = ({
 													<div className='flex justify-between items-center gap-2'>
 														<p>
 															Base: {item.quantity} X{' '}
-															{item?.product?.price?.toFixed(2)}
+															{(item.product.price
+																? item?.product?.price
+																: item.product.promoPrice
+															)?.toFixed(2)}
 														</p>
 														<p>
 															$
-															{(item.quantity * item.product.price)?.toFixed(2)}
+															{(
+																item.quantity *
+																(item.product.price
+																	? item.product.price
+																	: item.product.promoPrice)
+															)?.toFixed(2)}
 														</p>
 													</div>
 													<div className='flex justify-between items-center gap-2 font-medium text-gray-800'>
 														<p>Item Total</p>
 														<p>
 															$
-															{(item.quantity * item.product.price)?.toFixed(2)}
+															{(
+																item.quantity *
+																(item.product.price
+																	? item.product.price
+																	: item.product.promoPrice)
+															)?.toFixed(2)}
 														</p>
 													</div>
 												</div>

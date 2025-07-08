@@ -56,17 +56,17 @@ export default function Home() {
 	};
 
 	const addToCart = async (product) => {
-		console.log(product);
-		if (!activeOrder) return;
+		console.log('---', product);
+		if (!activeOrder || !product.stock) return;
 
 		const existingItem = activeOrder.items.find(
-			(item) => item.product.id === product.id
+			(item) => item.product.partNumber === product.partNumber
 		);
 		let newItems;
 
 		if (existingItem) {
 			newItems = activeOrder.items.map((item) =>
-				item.product.id === product.id
+				item.product.partNumber === product.partNumber
 					? { ...item, quantity: item.quantity + 1 }
 					: item
 			);
@@ -175,11 +175,11 @@ export default function Home() {
 					<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
 						{filteredProducts.map((product) => (
 							<HospitalityProductCard
-								key={product.tillId}
+								key={product.partNumber}
 								product={product}
 								activeOrder={activeOrder}
 								onAddToCart={addToCart}
-								cartQuantity={getCartQuantity(product.tillId)}
+								cartQuantity={getCartQuantity(product.partNumber)}
 							/>
 						))}
 					</div>
@@ -209,11 +209,11 @@ export default function Home() {
 					<div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4'>
 						{filteredProducts.map((product) => (
 							<RetailProductCard
-								key={product.tillId}
+								key={product.partNumber}
 								product={product}
 								activeOrder={activeOrder}
 								onAddToCart={addToCart}
-								cartQuantity={getCartQuantity(product.tillId)}
+								cartQuantity={getCartQuantity(product.partNumber)}
 							/>
 						))}
 					</div>

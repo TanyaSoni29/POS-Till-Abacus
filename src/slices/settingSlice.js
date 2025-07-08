@@ -3,7 +3,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-	activePanel: 'hospitality',
+	activePanel: 'retail',
 };
 
 const settingSlice = createSlice({

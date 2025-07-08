@@ -41,7 +41,7 @@ const orderSlice = createSlice({
 			);
 			if (orderIndex !== -1) {
 				const item = state.orders[orderIndex].items.find(
-					(item) => item.product.id === productId
+					(item) => item.product.partNumber === productId
 				);
 				if (item) {
 					item.quantity++;
@@ -55,7 +55,7 @@ const orderSlice = createSlice({
 			);
 			if (orderIndex !== -1) {
 				const item = state.orders[orderIndex].items.find(
-					(item) => item.product.id === productId
+					(item) => item.product.partNumber === productId
 				);
 				if (item) {
 					item.quantity--;
@@ -63,7 +63,7 @@ const orderSlice = createSlice({
 						// Remove item if quantity is 0 or less
 						state.orders[orderIndex].items = state.orders[
 							orderIndex
-						].items.filter((i) => i.product.id !== productId);
+						].items.filter((i) => i.product.partNumber !== productId);
 					}
 				}
 			}
