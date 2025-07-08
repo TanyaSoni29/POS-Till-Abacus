@@ -1,6 +1,6 @@
 /** @format */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Plus,
 	Minus,
@@ -52,6 +52,7 @@ export const OrderPanel = ({
 	const tax = subtotal * taxRate;
 	const total = subtotal + tax;
 
+	// Payment Button Handler
 	const handlePayment = async () => {
 		if (!selectedPaymentMethod || cartItems.length === 0) return;
 
@@ -71,6 +72,7 @@ export const OrderPanel = ({
 		}, 2000);
 	};
 
+	// Get Icon based on Payment method
 	const getPaymentIcon = (iconName) => {
 		switch (iconName) {
 			case 'credit-card':
@@ -86,6 +88,7 @@ export const OrderPanel = ({
 		}
 	};
 
+	// Update Order when Prices change or discounts are applied
 	const UpdateOrderPrices = (product) => {
 		if (!activeOrder) return;
 
@@ -93,6 +96,9 @@ export const OrderPanel = ({
 			(item) => item.product.id === product.id
 		);
 		let newItems;
+		const finalPrice =
+			(changePrices[product.id] || product.price) *
+			(1 - (discounts[product.id] || 0) / 100);
 
 		if (existingItem) {
 			newItems = activeOrder.items.map((item) =>
@@ -101,17 +107,44 @@ export const OrderPanel = ({
 							...item,
 							product: {
 								...item.product,
-								price: changePrices[product.id] || item.product.price,
+								price: parseFloat(finalPrice.toFixed(2)),
 							},
 					  }
 					: item
 			);
 		} else {
-			newItems = [...activeOrder.items, { product, quantity: 1 }];
+			newItems = [
+				...activeOrder.items,
+				{
+					product: {
+						...product,
+						price: finalPrice,
+					},
+					quantity: 1,
+				},
+			];
 		}
 
 		dispatch(updateOrder({ id: activeOrder.id, updates: { items: newItems } }));
 	};
+
+	useEffect(() => {
+		if (isDiscountOpen.open && isDiscountOpen.itemId) {
+			const item = cartItems.find(
+				(i) => i.product.id === isDiscountOpen.itemId
+			);
+			if (item) {
+				setChangePrices((prev) => ({
+					...prev,
+					[item.product.id]: item.product.price,
+				}));
+				setDiscounts((prev) => ({
+					...prev,
+					[item.product.id]: item.product.discount || 0,
+				}));
+			}
+		}
+	}, [isDiscountOpen]);
 
 	if (isComplete) {
 		return <ThankYou />;
@@ -228,8 +261,8 @@ export const OrderPanel = ({
 															</h4>
 															<input
 																type='number'
+																min={0}
 																placeholder='Enter discount code'
-																defaultValue={item.product.price.toFixed(2)}
 																className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
 																value={
 																	changePrices[item.product.id] ??
@@ -238,7 +271,10 @@ export const OrderPanel = ({
 																onChange={(e) =>
 																	setChangePrices((changePrices) => ({
 																		...changePrices,
-																		[item.product.id]: Number(e.target.value),
+																		[item.product.id]: Math.max(
+																			0,
+																			Number(e.target.value)
+																		),
 																	}))
 																}
 																onBlur={() => {
@@ -252,8 +288,9 @@ export const OrderPanel = ({
 															</h4>
 															<input
 																type='number'
+																min={0}
+																max={100}
 																placeholder='Enter discount code'
-																defaultValue={0}
 																className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
 																value={
 																	discounts[item.product.id] ??
@@ -262,9 +299,15 @@ export const OrderPanel = ({
 																onChange={(e) =>
 																	setDiscounts((discounts) => ({
 																		...discounts,
-																		[item.product.id]: Number(e.target.value),
+																		[item.product.id]: Math.min(
+																			100,
+																			Math.max(0, Number(e.target.value))
+																		),
 																	}))
 																}
+																onBlur={() => {
+																	UpdateOrderPrices(item.product);
+																}}
 															/>
 														</div>
 													</div>
@@ -281,25 +324,26 @@ export const OrderPanel = ({
 													<div className='grid grid-cols-2 gap-4 w-full'>
 														<button
 															className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer'
-															onClick={() =>
+															onClick={() => {
 																setChangePrices((changePrices) => ({
 																	...changePrices,
 																	[item.product.id]: item.product.price,
-																}))
-															}
+																}));
+																UpdateOrderPrices(item.product);
+															}}
 														>
 															{' '}
 															Reset Price
 														</button>
 														<button
 															className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer'
-															onClick={() =>
-																setDiscounts((prev) => {
-																	const updated = { ...prev };
-																	delete updated[item.product.id];
-																	return updated;
-																})
-															}
+															onClick={() => {
+																setDiscounts((prev) => ({
+																	...prev,
+																	[item.product.id]: 0,
+																}));
+																UpdateOrderPrices(item.product);
+															}}
 														>
 															Clear Discount
 														</button>
