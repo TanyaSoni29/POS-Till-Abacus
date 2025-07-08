@@ -49,7 +49,10 @@ export const ProductCard = ({
 		<div className='bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-md hover:scale-105'>
 			<div className='relative'>
 				<img
-					src={product.imageURL}
+					src={
+						product.imageURL ||
+						'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=400'
+					}
 					alt={product.title}
 					className='w-full h-32 object-cover'
 				/>
@@ -68,7 +71,9 @@ export const ProductCard = ({
 			</div>
 
 			<div className='p-4'>
-				<h3 className='font-semibold text-gray-900 mb-1'>{product.title}</h3>
+				<h3 className='font-semibold text-gray-900 mb-1'>
+					{product.partNumber}
+				</h3>
 				{/* <p className='text-2xl font-bold text-gray-900 mb-3'>
 					${product.price.toFixed(2)}
 				</p> */}

@@ -102,7 +102,7 @@ export default function Home() {
 
 	useEffect(() => {
 		dispatch(refreshTillProductShortcuts('00'));
-	}, [dispatch]);
+	}, [dispatch, activePanel]);
 
 	return (
 		<>
@@ -179,7 +179,7 @@ export default function Home() {
 								product={product}
 								activeOrder={activeOrder}
 								onAddToCart={addToCart}
-								cartQuantity={getCartQuantity(product.id)}
+								cartQuantity={getCartQuantity(product.tillId)}
 							/>
 						))}
 					</div>
@@ -213,7 +213,7 @@ export default function Home() {
 								product={product}
 								activeOrder={activeOrder}
 								onAddToCart={addToCart}
-								cartQuantity={getCartQuantity(product.id)}
+								cartQuantity={getCartQuantity(product.tillId)}
 							/>
 						))}
 					</div>
