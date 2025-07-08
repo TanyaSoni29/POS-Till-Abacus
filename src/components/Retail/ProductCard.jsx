@@ -11,12 +11,23 @@ import {
 	Carrot,
 	Soup,
 	Wine,
+	Bike,
+	Accessibility,
+	Users,
+	Shirt,
+	Cable,
+	LifeBuoy,
+	Link,
+	ShipWheel,
+	Cog,
+	Package,
+	Settings,
+	Panda,
 } from 'lucide-react';
 // import { useDispatch } from 'react-redux';
-import {
-	// decreaseOrderItemQuantity,
-	// increaseOrderItemQuantity,
-} from '../../slices/orderSlice';
+import // decreaseOrderItemQuantity,
+// increaseOrderItemQuantity,
+'../../slices/orderSlice';
 
 export const ProductCard = ({
 	product,
@@ -47,55 +58,102 @@ export const ProductCard = ({
 
 	const getCategoryColor = (category) => {
 		const colors = {
-			Coffee: 'bg-amber-500',
-			Pastries: 'bg-purple-500',
-			Salads: 'bg-red-500',
-			Mains: 'bg-blue-500',
-			Beverages: 'bg-purple-500',
+			BIKES: 'bg-amber-500',
+			LOYALTY: 'bg-purple-500',
+			LABOUR: 'bg-red-500',
+			CLOTHING: 'bg-blue-500',
+			TRANSMISSION: 'bg-purple-500',
+			TYRES: 'bg-red-500',
+			ACCESSORIES: 'bg-green-500',
+			WHEELS: 'bg-orange-500',
+			CONTROLS: 'bg-amber-500',
+			SEATING: 'bg-purple-500',
 		};
 		return colors[category] || 'bg-gray-500';
 	};
 
 	const getCategoryIcon = (iconName) => {
 		switch (iconName) {
-			case 'Coffee':
+			case 'BIKES':
 				return (
-					<Coffee
+					<Bike
 						size={24}
 						className='text-white font-bold'
 					/>
 				);
-			case 'Pastries':
+			case 'LOYALTY':
 				return (
-					<Pizza
+					<Accessibility
 						size={24}
 						className='text-white font-bold'
 					/>
 				);
-			case 'Salads':
+			case 'LABOUR':
 				return (
-					<Carrot
+					<Users
 						size={24}
 						className='text-white font-bold'
 					/>
 				);
-			case 'Mains':
+			case 'CLOTHING':
 				return (
-					<Soup
+					<Shirt
 						size={24}
 						className='text-white font-bold'
 					/>
 				);
-			case 'Beverages':
+			case 'TRANSMISSION':
 				return (
-					<Wine
+					<Cable
+						size={24}
+						className='text-white font-bold'
+					/>
+				);
+			case 'TYRES':
+				return (
+					<LifeBuoy
+						size={24}
+						className='text-white font-bold'
+					/>
+				);
+			case 'ACCESSORIES':
+				return (
+					<Link
+						size={24}
+						className='text-white font-bold'
+					/>
+				);
+			case 'WHEELS':
+				return (
+					<ShipWheel
+						size={24}
+						className='text-white font-bold'
+					/>
+				);
+			case 'CONTROLS':
+				return (
+					<Cog
+						size={24}
+						className='text-white font-bold'
+					/>
+				);
+			case 'SEATING':
+				return (
+					<Package
+						size={24}
+						className='text-white font-bold'
+					/>
+				);
+			case 'OTHER':
+				return (
+					<Panda
 						size={24}
 						className='text-white font-bold'
 					/>
 				);
 			default:
 				return (
-					<CreditCard
+					<Settings
 						size={24}
 						className='text-white font-bold'
 					/>
@@ -105,15 +163,27 @@ export const ProductCard = ({
 
 	const getBgColor = (category) => {
 		switch (category) {
-			case 'Coffee':
+			case 'BIKES':
 				return 'bg-sky-400';
-			case 'Pastries':
+			case 'LOYALTY':
 				return 'bg-pink-400';
-			case 'Salads':
+			case 'LABOUR':
 				return 'bg-green-400';
-			case 'Mains':
+			case 'CLOTHING':
 				return 'bg-purple-400';
-			case 'Beverages':
+			case 'TRANSMISSION':
+				return 'bg-cyan-400';
+			case 'TYRES':
+				return 'bg-orange-400';
+			case 'ACCESSORIES':
+				return 'bg-blue-400';
+			case 'WHEELS':
+				return 'bg-red-400';
+			case 'CONTROLS':
+				return 'bg-green-400';
+			case 'OTHER':
+				return 'bg-purple-400';
+			case 'SEATING':
 				return 'bg-cyan-400';
 			default:
 				return 'bg-gray-400';
@@ -123,7 +193,7 @@ export const ProductCard = ({
 	return (
 		<div
 			className={` ${getBgColor(
-				product.category
+				product.category ? product.category : 'OTHER'
 			)} rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-md hover:scale-105 cursor-pointer`}
 			onClick={() => onAddToCart(product)}
 		>
@@ -135,12 +205,12 @@ export const ProductCard = ({
 				/> */}
 				<div
 					className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(
-						product.category
+						product.category ? product.category : 'OTHER'
 					)}`}
 				>
-					{product.category}
+					{product.category ? product.category : 'OTHER'}
 				</div>
-				{!product.available && (
+				{!product.isActive && (
 					<div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center'>
 						<span className='text-white font-semibold'>Out of Stock</span>
 					</div>
@@ -150,12 +220,12 @@ export const ProductCard = ({
 			<div className='p-4 flex flex-col item-center justify-between'>
 				<div className='flex flex-col items-center justify-center mb-4 text-white'>
 					<div className='p-2 rounded-full border border-gray-200'>
-						{getCategoryIcon(product.category)}
+						{getCategoryIcon(product.category ? product.category : 'OTHER')}
 					</div>
-					<h3 className='font-semibold  mb-1'>{product.name}</h3>
-					<p className='text-2xl font-bold  mb-3'>
+					<h3 className='font-semibold  mb-1'>{product.title}</h3>
+					{/* <p className='text-2xl font-bold  mb-3'>
 						${product.price.toFixed(2)}
-					</p>
+					</p> */}
 				</div>
 
 				{/* {cartQuantity > 0 ? (

@@ -9,3 +9,8 @@ export const customerEndpoints = {
 	UPDATE_CUSTOMERS: (id) => `${BASE}/api/Customer/${id}`,
 	DELETE_CUSTOMERS: (id) => `${BASE}/api/Customer/${id}`,
 };
+
+export const tillEndpoints = {
+	GET_TILLS_PRODUCT_SHORTCUTS: (locCode) =>
+		`${BASE}/api/Till/getTillProductShortcuts?locCode=${locCode || '00'}`,
+};

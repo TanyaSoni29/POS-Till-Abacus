@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { OrderTabs } from '../components/OrderTabs';
 import { Search, Scan } from 'lucide-react';
 import { setSelectedCategory } from '../slices/categorySlice';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { updateOrder } from '../slices/orderSlice';
 import { ProductCard as HospitalityProductCard } from '../components/Hospitality/ProductCard';
 import { ProductCard as RetailProductCard } from '../components/Retail/ProductCard';
+import { refreshTillProductShortcuts } from '../slices/productSlice';
 
 const getCategoryColor = (category) => {
 	const colors = {
@@ -27,6 +28,7 @@ export default function Home() {
 		(state) => state.category
 	);
 	const { products } = useSelector((state) => state.product);
+	console.log('Products:', products);
 	const { activeOrderId, orders } = useSelector((state) => state.order);
 
 	const [searchQuery, setSearchQuery] = useState('');
@@ -35,10 +37,12 @@ export default function Home() {
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
 			const matchesSearch =
-				product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				product.category.toLowerCase().includes(searchQuery.toLowerCase());
+				product?.partNumber
+					?.toLowerCase()
+					.includes(searchQuery.toLowerCase()) ||
+				product?.title?.toLowerCase().includes(searchQuery.toLowerCase());
 			const matchesCategory =
-				selectedCategory === 'All' || product.category === selectedCategory;
+				selectedCategory === 'OTHER' || product.category === selectedCategory;
 			return matchesSearch && matchesCategory;
 		});
 	}, [products, searchQuery, selectedCategory]);
@@ -90,6 +94,17 @@ export default function Home() {
 		}
 	};
 
+	const retailCategories = [
+		...new Set(
+			products.map((product) => (product.category ? product.category : 'OTHER'))
+		),
+	];
+	console.log('Retail Categories:', retailCategories);
+
+	useEffect(() => {
+		dispatch(refreshTillProductShortcuts('00'));
+	}, [dispatch]);
+
 	return (
 		<>
 			{/* Order Tabs */}
@@ -137,6 +152,21 @@ export default function Home() {
 								{category}
 							</button>
 						))}
+
+					{activePanel === 'retail' &&
+						retailCategories.map((category) => (
+							<button
+								key={category}
+								onClick={() => dispatch(setSelectedCategory(category))}
+								className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
+									selectedCategory === category
+										? `text-white ${getCategoryColor(category)}`
+										: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+								}`}
+							>
+								{category}
+							</button>
+						))}
 				</div>
 			</div>
 
@@ -146,7 +176,7 @@ export default function Home() {
 					<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
 						{filteredProducts.map((product) => (
 							<HospitalityProductCard
-								key={product.id}
+								key={product.tillId}
 								product={product}
 								activeOrder={activeOrder}
 								onAddToCart={addToCart}
@@ -180,7 +210,7 @@ export default function Home() {
 					<div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4'>
 						{filteredProducts.map((product) => (
 							<RetailProductCard
-								key={product.id}
+								key={product.tillId}
 								product={product}
 								activeOrder={activeOrder}
 								onAddToCart={addToCart}

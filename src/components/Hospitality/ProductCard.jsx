@@ -49,8 +49,8 @@ export const ProductCard = ({
 		<div className='bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-md hover:scale-105'>
 			<div className='relative'>
 				<img
-					src={product.image}
-					alt={product.name}
+					src={product.imageURL}
+					alt={product.title}
 					className='w-full h-32 object-cover'
 				/>
 				<div
@@ -60,7 +60,7 @@ export const ProductCard = ({
 				>
 					{product.category}
 				</div>
-				{!product.available && (
+				{!product.isActive && (
 					<div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center'>
 						<span className='text-white font-semibold'>Out of Stock</span>
 					</div>
@@ -68,10 +68,10 @@ export const ProductCard = ({
 			</div>
 
 			<div className='p-4'>
-				<h3 className='font-semibold text-gray-900 mb-1'>{product.name}</h3>
-				<p className='text-2xl font-bold text-gray-900 mb-3'>
+				<h3 className='font-semibold text-gray-900 mb-1'>{product.title}</h3>
+				{/* <p className='text-2xl font-bold text-gray-900 mb-3'>
 					${product.price.toFixed(2)}
-				</p>
+				</p> */}
 
 				{cartQuantity > 0 ? (
 					<div className='flex items-center justify-between bg-gray-50 rounded-xl p-1'>
@@ -94,7 +94,7 @@ export const ProductCard = ({
 				) : (
 					<button
 						onClick={() => onAddToCart(product)}
-						disabled={!product.available}
+						disabled={!product.isActive}
 						className='w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
 					>
 						<Plus size={16} />
