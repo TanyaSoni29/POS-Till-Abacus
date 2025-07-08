@@ -30,7 +30,6 @@ export default function Home() {
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const activeOrder = orders.find((order) => order.id === activeOrderId);
-	console.log({ activeOrderId, activeOrder });
 	// Filter products based on search and category
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
@@ -81,6 +80,14 @@ export default function Home() {
 		return item ? item.quantity : 0;
 	};
 
+	const handleKeyDownInSearch = (e) => {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			// Trigger search or scan action
+			console.log('Search triggered:', searchQuery);
+		}
+	};
+
 	return (
 		<>
 			{/* Order Tabs */}
@@ -96,9 +103,14 @@ export default function Home() {
 						/>
 						<input
 							type='text'
-							placeholder='Search products...'
+							placeholder={
+								activePanel === 'hospitality'
+									? 'Search products...'
+									: 'Search Part Number...'
+							}
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
+							onKeyDown={handleKeyDownInSearch}
 							className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 						/>
 					</div>
@@ -110,20 +122,6 @@ export default function Home() {
 
 				<div className='flex gap-2 overflow-x-auto pb-2'>
 					{activePanel === 'hospitality' &&
-						categories.map((category) => (
-							<button
-								key={category}
-								onClick={() => dispatch(setSelectedCategory(category))}
-								className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
-									selectedCategory === category
-										? `text-white ${getCategoryColor(category)}`
-										: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-								}`}
-							>
-								{category}
-							</button>
-						))}
-					{activePanel === 'retail' &&
 						categories.map((category) => (
 							<button
 								key={category}
