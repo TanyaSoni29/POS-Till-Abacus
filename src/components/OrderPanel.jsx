@@ -22,6 +22,8 @@ import {
 	updateOrder,
 } from '../slices/orderSlice';
 import { useDispatch } from 'react-redux';
+import { createSale } from '../services/operations/salesApi';
+import { refreshTillProductShortcuts } from '../slices/productSlice';
 
 export const OrderPanel = ({
 	activeOrder,
@@ -60,19 +62,42 @@ export const OrderPanel = ({
 		if (!selectedPaymentMethod || cartItems.length === 0) return;
 
 		setIsProcessing(true);
+		console.log(selectedCustomer, cartItems);
 
-		// Simulate payment processing
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		try {
+			const payload = {
+				customerAccount:
+					selectedCustomer.id === '0' ? '00000' : selectedCustomer.accNo,
+				items: cartItems.map((item) => {
+					return {
+						partNumber: item.product.partNumber,
+						quantity: item.quantity,
+						unitPrice: item.product.price || item.product.promoPrice || 0,
+						discount: item.discount || 0,
+						tax: item.tax || 0,
+					};
+				}),
+				paymentType: selectedPaymentMethod.id,
+				paymentDueDate: new Date().toISOString(),
+				tillId: 'A',
+				location: '01',
+			};
+			const response = await createSale(payload);
+			if (response.status === 'success') {
+				setIsProcessing(false);
+				setIsComplete(true);
+				dispatch(refreshTillProductShortcuts('00'));
 
-		setIsProcessing(false);
-		setIsComplete(true);
-
-		// Auto close after success
-		setTimeout(() => {
-			onPaymentComplete();
-			setIsComplete(false);
-			setSelectedPaymentMethod(null);
-		}, 2000);
+				// Auto close after success
+				setTimeout(() => {
+					onPaymentComplete();
+					setIsComplete(false);
+					setSelectedPaymentMethod(null);
+				}, 2000);
+			}
+		} catch (error) {
+			console.lo(error);
+		}
 	};
 
 	// Get Icon based on Payment method

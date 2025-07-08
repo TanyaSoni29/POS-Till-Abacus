@@ -19,3 +19,7 @@ export const PrtoductEndpoiunts = {
 	GET_PRODUCTS_BY_PART_NUMBER: (partnumber) =>
 		`${BASE}/api/Products/partnumber/${partnumber}`,
 };
+
+export const salesEndpoints = {
+	CREATE_SALE: `${BASE}/api/Sales`,
+};
