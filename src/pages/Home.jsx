@@ -6,7 +6,8 @@ import { Search, Scan } from 'lucide-react';
 import { setSelectedCategory } from '../slices/categorySlice';
 import { useMemo, useState } from 'react';
 import { updateOrder } from '../slices/orderSlice';
-import { ProductCard } from '../components/ProductCard';
+import { ProductCard as HospitalityProductCard } from '../components/Hospitality/ProductCard';
+import { ProductCard as RetailProductCard } from '../components/Retail/ProductCard';
 
 const getCategoryColor = (category) => {
 	const colors = {
@@ -81,6 +82,7 @@ export default function Home() {
 	};
 
 	const handleKeyDownInSearch = (e) => {
+		if (activePanel === 'hospitality') return;
 		if (e.key === 'Enter') {
 			e.preventDefault();
 			// Trigger search or scan action
@@ -143,7 +145,7 @@ export default function Home() {
 				<div className='flex-1 px-6 pb-6 overflow-y-auto max-h-[39rem]'>
 					<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
 						{filteredProducts.map((product) => (
-							<ProductCard
+							<HospitalityProductCard
 								key={product.id}
 								product={product}
 								activeOrder={activeOrder}
@@ -175,9 +177,9 @@ export default function Home() {
 			{/* Retail Product Grid */}
 			{activePanel === 'retail' && (
 				<div className='flex-1 px-6 pb-6 overflow-y-auto max-h-[39rem]'>
-					<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+					<div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4'>
 						{filteredProducts.map((product) => (
-							<ProductCard
+							<RetailProductCard
 								key={product.id}
 								product={product}
 								activeOrder={activeOrder}
