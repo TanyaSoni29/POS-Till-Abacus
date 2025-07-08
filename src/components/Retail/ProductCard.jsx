@@ -204,6 +204,13 @@ export const ProductCard = ({
 					className='w-full h-32 object-cover'
 				/> */}
 				<div
+					className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(
+						product.category ? product.category : 'OTHER'
+					)}`}
+				>
+					#{product.partNumber ? product.partNumber : 'OTHER'}
+				</div>
+				<div
 					className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(
 						product.category ? product.category : 'OTHER'
 					)}`}
@@ -218,14 +225,12 @@ export const ProductCard = ({
 			</div>
 
 			<div className='p-4 flex flex-col item-center justify-between'>
-				<div className='flex flex-col items-center justify-center mb-4 text-white'>
+				<div className='flex flex-col items-center justify-center mb-3 text-white'>
 					<div className='p-2 rounded-full border border-gray-200'>
 						{getCategoryIcon(product.category ? product.category : 'OTHER')}
 					</div>
-					<h3 className='font-semibold  mb-1'>{product.title}</h3>
-					{/* <p className='text-2xl font-bold  mb-3'>
-						${product.price.toFixed(2)}
-					</p> */}
+					<h3 className='text-lg font-semibold  mb-1'>{product.title}</h3>
+					<p className='text-md font-bold'>STOCK: {product.stock}</p>
 				</div>
 
 				{/* {cartQuantity > 0 ? (

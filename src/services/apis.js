@@ -14,3 +14,8 @@ export const tillEndpoints = {
 	GET_TILLS_PRODUCT_SHORTCUTS: (locCode) =>
 		`${BASE}/api/Till/getTillProductShortcuts?locCode=${locCode || '00'}`,
 };
+
+export const PrtoductEndpoiunts = {
+	GET_PRODUCTS_BY_PART_NUMBER: (partnumber) =>
+		`${BASE}/api/Products/partnumber/${partnumber}`,
+};

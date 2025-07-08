@@ -4,8 +4,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-	categories: ['All', 'Coffee', 'Pastries', 'Salads', 'Mains', 'Beverages'],
-	selectedCategory: 'All',
+	categories: ['OTHER', 'Coffee', 'Pastries', 'Salads', 'Mains', 'Beverages'],
+	selectedCategory: 'OTHER',
 };
 
 const categorySlice = createSlice({

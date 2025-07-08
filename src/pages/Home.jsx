@@ -55,7 +55,7 @@ export default function Home() {
 		);
 	};
 
-	const addToCart = (product) => {
+	const addToCart = async (product) => {
 		console.log(product);
 		if (!activeOrder) return;
 
@@ -99,7 +99,6 @@ export default function Home() {
 			products.map((product) => (product.category ? product.category : 'OTHER'))
 		),
 	];
-	console.log('Retail Categories:', retailCategories);
 
 	useEffect(() => {
 		dispatch(refreshTillProductShortcuts('00'));

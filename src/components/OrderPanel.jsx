@@ -107,7 +107,7 @@ export const OrderPanel = ({
 							...item,
 							product: {
 								...item.product,
-								price: parseFloat(finalPrice.toFixed(2)),
+								price: parseFloat(finalPrice?.toFixed(2)),
 							},
 					  }
 					: item
@@ -180,10 +180,10 @@ export const OrderPanel = ({
 									>
 										<div className='flex-1'>
 											<h4 className='font-medium text-gray-900'>
-												{item.product.name}
+												{item.product.partNumber}
 											</h4>
 											<p className='text-sm text-gray-600'>
-												${item.product.price.toFixed(2)} each
+												${item?.product?.price?.toFixed(2)} each
 											</p>
 										</div>
 										<div className='flex items-center gap-2'>
@@ -354,7 +354,7 @@ export const OrderPanel = ({
 													<div className='flex justify-between items-center gap-2'>
 														<p>
 															Base: {item.quantity} X{' '}
-															{item.product.price.toFixed(2)}
+															{item?.product?.price?.toFixed(2)}
 														</p>
 														<p>
 															$
@@ -382,15 +382,15 @@ export const OrderPanel = ({
 					<div className='p-4 border-t border-gray-200 space-y-2'>
 						<div className='flex justify-between text-sm'>
 							<span>Subtotal:</span>
-							<span>${subtotal.toFixed(2)}</span>
+							<span>${subtotal?.toFixed(2)}</span>
 						</div>
 						<div className='flex justify-between text-sm'>
 							<span>Tax (8.5%):</span>
-							<span>${tax.toFixed(2)}</span>
+							<span>${tax?.toFixed(2)}</span>
 						</div>
 						<div className='flex justify-between font-bold text-lg border-t border-gray-200 pt-2'>
 							<span>Total:</span>
-							<span>${total.toFixed(2)}</span>
+							<span>${total?.toFixed(2)}</span>
 						</div>
 					</div>
 				)}
