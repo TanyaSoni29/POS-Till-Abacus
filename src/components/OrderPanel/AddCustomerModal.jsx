@@ -57,13 +57,13 @@ export default function AddCustomerModal({ onclose }) {
 						<div className='w-full flex gap-2 justify-end items-center'>
 							<button
 								type='button'
-								className='bg-gradient-to-r from-gray-300 to-red-600 px-2 py-2 text-white rounded-lg text-sm font-semibold'
+								className='px-3 py-2 bg-transparent border border-gray-200 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2'
 							>
 								Cancel
 							</button>
 							<button
 								type='submit'
-								className='bg-gradient-to-r from-blue-500 to-purple-600 px-2 py-2 text-white rounded-lg text-sm font-semibold'
+								className='px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2'
 							>
 								Submit
 							</button>

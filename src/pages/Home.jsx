@@ -31,7 +31,7 @@ export default function Home() {
 	);
 	const { products } = useSelector((state) => state.product);
 	const { activeOrderId, orders } = useSelector((state) => state.order);
-	
+
 	const [searchQuery, setSearchQuery] = useState('');
 	const [advanceSearchOpen, setAdvanceSearchOpen] = useState(false);
 	const activeOrder = orders.find((order) => order.id === activeOrderId);
@@ -45,7 +45,7 @@ export default function Home() {
 					.includes(searchQuery.toLowerCase()) ||
 				product?.title?.toLowerCase().includes(searchQuery.toLowerCase());
 			const matchesCategory =
-				selectedCategory === 'OTHER' || product.category === selectedCategory;
+				selectedCategory === 'ALL' || product.category === selectedCategory;
 			return matchesSearch && matchesCategory;
 		});
 	}, [products, searchQuery, selectedCategory]);
@@ -99,7 +99,7 @@ export default function Home() {
 
 	const retailCategories = [
 		...new Set(
-			products.map((product) => (product.category ? product.category : 'OTHER'))
+			products.map((product) => (product.category ? product.category : 'ALL'))
 		),
 	];
 
