@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ChevronDown, Plus, Search, User, Users } from 'lucide-react';
 import AddCustomerModal from './AddCustomerModal';
+import { useOutsideClick } from '../../hook/useOutsideClick';
 export default function CustomerSection({
 	selectedCustomer,
 	onSelectCustomer,
@@ -10,15 +11,16 @@ export default function CustomerSection({
 }) {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isCustomerDropdownOpen, setIsCustomerDropdownOpen] = useState(false);
-	const [addCustomerOpen, setAddCustomerIOpen] = useState(false);
+	const [addCustomerOpen, setAddCustomerOpen] = useState(false);
 
 	const filterCunstomers = customers.filter((customer) =>
 		customer.firstname.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
 	const handleClose = () => {
-		setAddCustomerIOpen(false);
+		setAddCustomerOpen(false);
 	};
+	const ref = useOutsideClick(() => setIsCustomerDropdownOpen(false));
 
 	return (
 		<div className='p-4 border-b border-gray-200'>
@@ -55,7 +57,10 @@ export default function CustomerSection({
 				</div>
 
 				{isCustomerDropdownOpen && (
-					<div className='absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 p-2'>
+					<div
+						className='absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 p-2'
+						ref={ref}
+					>
 						<div className='flex flex-col'>
 							<div className='flex gap-4'>
 								<div className='relative flex-1'>
@@ -75,7 +80,7 @@ export default function CustomerSection({
 							<div className='py-2 border-b border-gray-100'>
 								<button
 									className='w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 rounded-lg h-10'
-									onClick={() => setAddCustomerIOpen(true)}
+									onClick={() => setAddCustomerOpen(true)}
 								>
 									<Plus
 										size={18}

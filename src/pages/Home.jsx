@@ -30,12 +30,12 @@ export default function Home() {
 		(state) => state.category
 	);
 	const { products } = useSelector((state) => state.product);
-	console.log('Products:', products);
 	const { activeOrderId, orders } = useSelector((state) => state.order);
-
+	
 	const [searchQuery, setSearchQuery] = useState('');
 	const [advanceSearchOpen, setAdvanceSearchOpen] = useState(false);
 	const activeOrder = orders.find((order) => order.id === activeOrderId);
+	console.log('Products:', products);
 	// Filter products based on search and category
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
