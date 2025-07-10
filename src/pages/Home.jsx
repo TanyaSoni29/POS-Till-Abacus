@@ -1,14 +1,16 @@
 /** @format */
 
-import { useDispatch, useSelector } from 'react-redux';
-import { OrderTabs } from '../components/OrderTabs';
-import { Search, Scan } from 'lucide-react';
-import { setSelectedCategory } from '../slices/categorySlice';
 import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Search } from 'lucide-react';
+
+import { setSelectedCategory } from '../slices/categorySlice';
 import { updateOrder } from '../slices/orderSlice';
+import { OrderTabs } from '../components/OrderTabs';
 import { ProductCard as HospitalityProductCard } from '../components/Hospitality/ProductCard';
 import { ProductCard as RetailProductCard } from '../components/Retail/ProductCard';
 import { refreshTillProductShortcuts } from '../slices/productSlice';
+import AdvanceSearch from '../components/Home/AdvanceSearch';
 
 const getCategoryColor = (category) => {
 	const colors = {
@@ -32,6 +34,7 @@ export default function Home() {
 	const { activeOrderId, orders } = useSelector((state) => state.order);
 
 	const [searchQuery, setSearchQuery] = useState('');
+	const [advanceSearchOpen, setAdvanceSearchOpen] = useState(false);
 	const activeOrder = orders.find((order) => order.id === activeOrderId);
 	// Filter products based on search and category
 	const filteredProducts = useMemo(() => {
@@ -130,9 +133,12 @@ export default function Home() {
 							className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 						/>
 					</div>
-					<button className='px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2'>
-						<Scan size={20} />
-						Scan
+					<button
+						className='px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2'
+						onClick={() => setAdvanceSearchOpen(true)}
+					>
+						<Search size={20} />
+						Advance
 					</button>
 				</div>
 
@@ -235,6 +241,10 @@ export default function Home() {
 						</div>
 					)}
 				</div>
+			)}
+
+			{advanceSearchOpen && (
+				<AdvanceSearch setAdvanceSearchOpen={setAdvanceSearchOpen} />
 			)}
 		</>
 	);
