@@ -12,7 +12,10 @@ import {
 } from 'lucide-react';
 
 import { paymentMethods } from '../../assets/data/paymentMethods';
-import { createSale } from '../../services/operations/salesApi';
+import {
+	// completePayment,
+	createSale,
+} from '../../services/operations/salesApi';
 import { refreshTillProductShortcuts } from '../../slices/productSlice';
 import ThankYou from './ThankYou';
 
@@ -77,22 +80,31 @@ export default function PaymentMethod({
 			};
 			const response = await createSale(payload);
 			if (response.status === 'success') {
+				// const completePaymentPayload = {
+				// 	saleTransactionId: response.data.transactionReference,
+				// 	paymentType: selectedPaymentMethod.id,
+				// 	tillId: 'A',
+				// };
+				// const responseOfComplete = await completePayment(
+				// 	completePaymentPayload
+				// );
+				// if (responseOfComplete.status === 'success') {
 				setIsProcessing(false);
 				setIsComplete(true);
 				dispatch(refreshTillProductShortcuts('00'));
-
 				// Auto close after success
 				setTimeout(() => {
 					onPaymentComplete();
 					setIsComplete(false);
 					setSelectedPaymentMethod(null);
 				}, 2000);
+				// }
 			} else {
 				console.log(response?.error?.message);
 				setIsProcessing(false);
 			}
 		} catch (error) {
-			console.lo(error);
+			console.log(error);
 		}
 	};
 

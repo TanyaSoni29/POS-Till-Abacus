@@ -22,4 +22,5 @@ export const PrtoductEndpoiunts = {
 
 export const salesEndpoints = {
 	CREATE_SALE: `${BASE}/api/Sales`,
+	COMPLETE_PAYMENT: `${BASE}/api/Sales/complete-payment`,
 };
