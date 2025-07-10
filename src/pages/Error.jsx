@@ -1,13 +1,13 @@
 /** @format */
 
-import { useNavigate } from 'react-router-dom';
+import { useMoveBack } from '../hook/useMoveBack';
 
 export default function Error() {
-	const navigate = useNavigate();
+	const moveBack = useMoveBack();
 	return (
 		<div className='flex flex-col justify-center item-center h-screen bg-red-100 text-red-800'>
-			<h2>Something Went Wrong 🥲</h2>
-			<button onClick={() => navigate('/')}>👈🏻 Go Back</button>
+			<h2> The page you are looking for could not be found 😢</h2>
+			<button onClick={moveBack}>👈🏻 Go Back</button>
 		</div>
 	);
 }
