@@ -73,14 +73,22 @@ export const OrderPanel = ({
 						partNumber: item.product.partNumber,
 						quantity: item.quantity,
 						unitPrice: item.product.price || item.product.promoPrice || 0,
-						discount: item.discount || 0,
-						tax: item.tax || 0,
+						discount: item.product.discount || 0,
+						vat: item?.product.vat || 0,
+						costPrice: 0,
+						isPromo: item.product.isPromo || false,
+						stockNumber: item.product.stockNumber || '00',
 					};
 				}),
 				paymentType: selectedPaymentMethod.id,
 				paymentDueDate: new Date().toISOString(),
 				tillId: 'A',
 				location: '01',
+				salesCode: '001',
+				discountCode: '',
+				notes: '',
+				invoiceNumber: '',
+				orderNo: '',
 			};
 			const response = await createSale(payload);
 			if (response.status === 'success') {
@@ -94,6 +102,9 @@ export const OrderPanel = ({
 					setIsComplete(false);
 					setSelectedPaymentMethod(null);
 				}, 2000);
+			} else {
+				console.log(response?.error?.message);
+				setIsProcessing(false);
 			}
 		} catch (error) {
 			console.lo(error);
