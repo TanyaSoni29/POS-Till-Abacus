@@ -60,7 +60,7 @@ export default function Home() {
 
 	const addToCart = async (product) => {
 		console.log('---', product);
-		if (!activeOrder || !product.stock) return;
+		if (!activeOrder) return;
 
 		const existingItem = activeOrder.items.find(
 			(item) => item.product.partNumber === product.partNumber
@@ -104,7 +104,7 @@ export default function Home() {
 	];
 
 	useEffect(() => {
-		dispatch(refreshTillProductShortcuts('00'));
+		dispatch(refreshTillProductShortcuts('A'));
 	}, [dispatch, activePanel]);
 
 	return (

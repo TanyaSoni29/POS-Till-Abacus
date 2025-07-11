@@ -13,7 +13,7 @@ import {
 
 import { paymentMethods } from '../../assets/data/paymentMethods';
 import {
-	// completePayment,
+	completePayment,
 	createSale,
 } from '../../services/operations/salesApi';
 import { refreshTillProductShortcuts } from '../../slices/productSlice';
@@ -54,8 +54,7 @@ export default function PaymentMethod({
 
 		try {
 			const payload = {
-				customerAccount:
-					selectedCustomer.id === '0' ? '00000' : selectedCustomer.accNo,
+				customerAccount: selectedCustomer.accNo,
 				items: cartItems.map((item) => {
 					return {
 						partNumber: item.product.partNumber,
@@ -78,33 +77,33 @@ export default function PaymentMethod({
 				invoiceNumber: '',
 				orderNo: '',
 			};
-			const response = await createSale(payload);
+			let response = await createSale(payload);
+
+			if (response.status === 'success' && selectedPaymentMethod.id !== 1) {
+				const completePaymentPayload = {
+					saleTransactionId: response.data.transactionReference,
+					paymentType: selectedPaymentMethod.id,
+					tillId: 'A',
+				};
+				response = await completePayment(completePaymentPayload);
+			}
 			if (response.status === 'success') {
-				// const completePaymentPayload = {
-				// 	saleTransactionId: response.data.transactionReference,
-				// 	paymentType: selectedPaymentMethod.id,
-				// 	tillId: 'A',
-				// };
-				// const responseOfComplete = await completePayment(
-				// 	completePaymentPayload
-				// );
-				// if (responseOfComplete.status === 'success') {
 				setIsProcessing(false);
 				setIsComplete(true);
-				dispatch(refreshTillProductShortcuts('00'));
+				dispatch(refreshTillProductShortcuts('A'));
 				// Auto close after success
 				setTimeout(() => {
 					onPaymentComplete();
 					setIsComplete(false);
 					setSelectedPaymentMethod(null);
 				}, 2000);
-				// }
 			} else {
-				console.log(response?.error?.message);
+				console.log('Payment Error:', response);
 				setIsProcessing(false);
 			}
 		} catch (error) {
 			console.log(error);
+			setIsProcessing(false);
 		}
 	};
 

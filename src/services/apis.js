@@ -11,8 +11,8 @@ export const customerEndpoints = {
 };
 
 export const tillEndpoints = {
-	GET_TILLS_PRODUCT_SHORTCUTS: (locCode) =>
-		`${BASE}/api/Till/getTillProductShortcuts?locCode=${locCode || '00'}`,
+	GET_TILLS_PRODUCT_SHORTCUTS: (SetID) =>
+		`${BASE}/api/Till/getTillProductShortcuts?SetID=${SetID || 'A'}`,
 };
 
 export const PrtoductEndpoiunts = {

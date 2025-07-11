@@ -68,7 +68,7 @@ export const OrderPanel = ({
 							<span>${subtotal?.toFixed(2)}</span>
 						</div>
 						<div className='flex justify-between text-sm'>
-							<span>Tax (8.5%):</span>
+							<span>VAT (8.5%):</span>
 							<span>${tax?.toFixed(2)}</span>
 						</div>
 						<div className='flex justify-between font-bold text-lg border-t border-gray-200 pt-2'>

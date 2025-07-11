@@ -230,7 +230,7 @@ export const ProductCard = ({
 						{getCategoryIcon(product.category ? product.category : 'OTHER')}
 					</div>
 					<h3 className='text-lg font-semibold  mb-1'>{product.title}</h3>
-					<p className='text-md font-bold'>STOCK: {product.stock}</p>
+					{/* <p className='text-md font-bold'>STOCK: {product.stock}</p> */}
 				</div>
 
 				{/* {cartQuantity > 0 ? (

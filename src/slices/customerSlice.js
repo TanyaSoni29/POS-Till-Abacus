@@ -24,7 +24,7 @@ export function refreshCustomers() {
 			if (response.status === 'success') {
 				dispatch(
 					setCustomers([
-						{ id: '0', firstname: 'Walk-in Customer', loyaltyPoints: 0 },
+						{ id: '0', firstname: 'Walk-in Customer', loyaltyPoints: 0, accNo: "00000" },
 						...response.data,
 					])
 				);
