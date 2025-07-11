@@ -19,6 +19,8 @@ export default function AddCustomerModal({ onclose }) {
 	const {
 		register,
 		handleSubmit,
+		getValues,
+		setValue,
 		formState: { errors },
 	} = useForm();
 
@@ -57,6 +59,7 @@ export default function AddCustomerModal({ onclose }) {
 							<button
 								type='button'
 								className='px-3 py-2 bg-transparent border border-gray-200 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2'
+								onClick={onclose}
 							>
 								Cancel
 							</button>
@@ -176,7 +179,7 @@ export default function AddCustomerModal({ onclose }) {
 													<input
 														type='text'
 														placeholder='Enter address...'
-														{...register('houseName', {
+														{...register('address2', {
 															required: 'This field is required.',
 														})}
 														className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
@@ -190,7 +193,7 @@ export default function AddCustomerModal({ onclose }) {
 													<input
 														type='text'
 														placeholder='Enter address...'
-														{...register('houseName', {
+														{...register('address3', {
 															required: 'This field is required.',
 														})}
 														className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
@@ -202,7 +205,7 @@ export default function AddCustomerModal({ onclose }) {
 													<input
 														type='text'
 														placeholder='Enter address...'
-														{...register('houseName', {
+														{...register('address4', {
 															required: 'This field is required.',
 														})}
 														className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
@@ -339,7 +342,22 @@ export default function AddCustomerModal({ onclose }) {
 											<button
 												type='button'
 												className='px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2'
-												onClick={() => {}}
+												onClick={() => {
+													const profileValues = getValues(); // Get all profile form values
+
+													// Set the same values to the shipping fields
+													setValue('shippingSurname', profileValues.Surname);
+													setValue('shippingName', profileValues.name);
+													setValue('shippingTitle', profileValues.title);
+													setValue('shippingInitials', profileValues.initials);
+													setValue('shippingAddress', profileValues.address);
+													setValue(
+														'shippingHouseName',
+														profileValues.houseName
+													);
+													setValue('shippingPostcode', profileValues.postcode);
+													setValue('shippingCountry', profileValues.country);
+												}}
 											>
 												Same As Profile <CopyCheck size={16} />
 											</button>
@@ -348,12 +366,12 @@ export default function AddCustomerModal({ onclose }) {
 										<div className='flex items-center gap-2'>
 											<FormRow
 												label='Surname'
-												error={errors?.Surname?.message}
+												error={errors?.shippingSurname?.message}
 											>
 												<input
 													type='text'
-													placeholder='Enter Surname...'
-													{...register('Surname', {
+													placeholder='Enter shipping surname...'
+													{...register('shippingSurname', {
 														required: 'This field is required.',
 													})}
 													className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
@@ -362,12 +380,12 @@ export default function AddCustomerModal({ onclose }) {
 
 											<FormRow
 												label='Name'
-												error={errors?.name?.message}
+												error={errors?.shippingName?.message}
 											>
 												<input
 													type='text'
-													placeholder='Enter name...'
-													{...register('name')}
+													placeholder='Enter shipping name...'
+													{...register('shippingName')}
 													className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 												/>
 											</FormRow>
@@ -375,12 +393,12 @@ export default function AddCustomerModal({ onclose }) {
 										<div className='flex items-center gap-2'>
 											<FormRow
 												label='Title'
-												error={errors?.title?.message}
+												error={errors?.shippingTitle?.message}
 											>
 												<input
 													type='text'
-													placeholder='Enter Title (Mr, Mrs, Miss...)'
-													{...register('title', {
+													placeholder='Enter Shipping Title (Mr, Mrs, Miss...)'
+													{...register('shippingTitle', {
 														required: 'This field is required.',
 													})}
 													className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
@@ -388,12 +406,12 @@ export default function AddCustomerModal({ onclose }) {
 											</FormRow>
 											<FormRow
 												label='Initials'
-												error={errors?.initials?.message}
+												error={errors?.shippingInitials?.message}
 											>
 												<input
 													type='text'
-													placeholder='Enter initials...'
-													{...register('initials')}
+													placeholder='Enter Shipping Initials...'
+													{...register('shippingInitials')}
 													className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 												/>
 											</FormRow>
@@ -402,12 +420,12 @@ export default function AddCustomerModal({ onclose }) {
 										<div className='flex items-center gap-2'>
 											<FormRow
 												label='Address'
-												error={errors?.address?.message}
+												error={errors?.shippingAddress?.message}
 											>
 												<input
 													type='text'
-													placeholder='Enter address...'
-													{...register('address')}
+													placeholder='Enter Shipping Address...'
+													{...register('shippingAddress')}
 													className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 												/>
 											</FormRow>
@@ -416,7 +434,7 @@ export default function AddCustomerModal({ onclose }) {
 													<input
 														type='text'
 														placeholder='Enter address...'
-														{...register('houseName', {
+														{...register('address2', {
 															required: 'This field is required.',
 														})}
 														className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
@@ -430,7 +448,7 @@ export default function AddCustomerModal({ onclose }) {
 													<input
 														type='text'
 														placeholder='Enter address...'
-														{...register('houseName', {
+														{...register('address3', {
 															required: 'This field is required.',
 														})}
 														className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
@@ -442,7 +460,7 @@ export default function AddCustomerModal({ onclose }) {
 													<input
 														type='text'
 														placeholder='Enter address...'
-														{...register('houseName', {
+														{...register('address4', {
 															required: 'This field is required.',
 														})}
 														className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
@@ -453,12 +471,12 @@ export default function AddCustomerModal({ onclose }) {
 										<div className='flex items-center gap-2'>
 											<FormRow
 												label='House Name'
-												error={errors?.houseName?.message}
+												error={errors?.shippingHouseName?.message}
 											>
 												<input
 													type='text'
 													placeholder='Enter house name...'
-													{...register('houseName', {
+													{...register('shippingHouseName', {
 														required: 'This field is required.',
 													})}
 													className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
@@ -467,12 +485,12 @@ export default function AddCustomerModal({ onclose }) {
 
 											<FormRow
 												label='Postcode'
-												error={errors?.postcode?.message}
+												error={errors?.shippingPostcode?.message}
 											>
 												<input
 													type='text'
-													placeholder='Enter postcode...'
-													{...register('postcode')}
+													placeholder='Enter Shipping Postcode...'
+													{...register('shippingPostcode')}
 													className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 												/>
 											</FormRow>
@@ -480,12 +498,12 @@ export default function AddCustomerModal({ onclose }) {
 										<div className='flex items-center gap-2'>
 											<FormRow
 												label='Country'
-												error={errors?.country?.message}
+												error={errors?.shippingCountry?.message}
 											>
 												<input
 													type='text'
-													placeholder='Enter country...'
-													{...register('country')}
+													placeholder='Enter Shipping Country...'
+													{...register('shippingCountry')}
 													className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 												/>
 											</FormRow>
