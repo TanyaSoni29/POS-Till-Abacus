@@ -63,13 +63,13 @@ export default function Home() {
 		const completeProduct = await getTillProduct(addProduct.partNumber, '01');
 		const product = completeProduct.data;
 		const existingItem = activeOrder.items.find(
-			(item) => item.product.partNumber === completeProduct.partNumber
+			(item) => item.product.partNumber === product.partNumber
 		);
 		let newItems;
 
 		if (existingItem) {
 			newItems = activeOrder.items.map((item) =>
-				item.product.partNumber === completeProduct.partNumber
+				item.product.partNumber === product.partNumber
 					? { ...item, quantity: item.quantity + 1 }
 					: item
 			);
