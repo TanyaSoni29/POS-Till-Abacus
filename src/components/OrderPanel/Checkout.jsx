@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 export default function Checkout({ onclose }) {
 	const [activeTab, setActiveTab] = useState('express');
-
+	const [expressInputValue, setExpressInputValue] = useState('0.00');
 	const tabs = [
 		{ key: 'express', label: 'Express Checkout', icon: <Check size={20} /> },
 		{
@@ -14,6 +14,27 @@ export default function Checkout({ onclose }) {
 			icon: <CheckCheck size={20} />,
 		},
 	];
+	const handleButtonClick = (btn) => {
+		if (btn.startsWith('£')) {
+			// Overwrite with currency value
+			const numericValue = btn.replace('£', '');
+			setExpressInputValue(parseFloat(numericValue).toFixed(2));
+		} else if (btn === '<') {
+			// Backspace
+			setExpressInputValue((prev) => {
+				const newVal = prev.slice(0, -1);
+				return newVal === '' ? '0.00' : newVal;
+			});
+		} else {
+			// Append digits or decimal
+			setExpressInputValue((prev) => {
+				let newVal = prev === '0.00' || prev === '0' ? btn : prev + btn;
+				// Prevent multiple decimals
+				if (btn === '.' && prev.includes('.')) return prev;
+				return newVal;
+			});
+		}
+	};
 	return (
 		<div
 			className='fixed inset-0 flex justify-center items-center bg-black/25 overflow-hidden'
@@ -92,7 +113,7 @@ export default function Checkout({ onclose }) {
 										<input
 											type='text'
 											readOnly
-											value='0.00'
+											value={expressInputValue}
 											className='text-right text-2xl border border-gray-300 rounded-md px-4 py-2 w-full font-mono'
 										/>
 										<button className='ml-4 px-4 py-2 bg-red-100 text-red-600 font-semibold rounded-lg hover:bg-red-200'>
@@ -120,6 +141,7 @@ export default function Checkout({ onclose }) {
 										].map((btn, i) => (
 											<button
 												key={i}
+												onClick={() => handleButtonClick(btn)}
 												className='py-3 text-center bg-white border border-gray-200 rounded-lg hover:bg-gray-100 text-lg font-semibold'
 											>
 												{btn}
