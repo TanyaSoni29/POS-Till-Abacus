@@ -16,7 +16,6 @@ export async function handleGetReq(URL) {
 	try {
 		const response = await axios.get(URL, { headers: setHeaders() });
 		if (response.status >= 200 && response.status < 300) {
-			console.log('GET request successful:', response);
 			return { data: response.data, status: 'success' };
 		} else {
 			console.log('Unexpected response status:', response);

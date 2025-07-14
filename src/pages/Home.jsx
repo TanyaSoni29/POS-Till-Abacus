@@ -88,12 +88,20 @@ export default function Home() {
 		return item ? item.quantity : 0;
 	};
 
-	const handleKeyDownInSearch = (e) => {
+	const handleKeyDownInSearch = async (e) => {
 		if (activePanel === 'hospitality') return;
 		if (e.key === 'Enter') {
 			e.preventDefault();
 			// Trigger search or scan action
-			console.log('Search triggered:', searchQuery);
+			try {
+				const response = await getTillProduct(searchQuery, '01');
+				const product = response.data;
+				if (!product) throw new Error('Product not found');
+				await addToCart(product); // ✅ Reuse existing logic
+				setSearchQuery(''); // Optional: clear search field
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	};
 
