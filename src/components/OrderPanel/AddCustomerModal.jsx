@@ -43,7 +43,7 @@ export default function AddCustomerModal({ onclose }) {
 				onClick={(e) => e.stopPropagation()}
 			>
 				{/* Header */}
-				<div className='w-full h-[]4rem] px-6 py-4 border-b border-b-gray-200'>
+				<div className='w-full h-[4rem] px-6 py-4 border-b border-b-gray-200'>
 					<div className='flex items-center justify-between'>
 						<p className='font-bold text-2xl'>New Customer</p>
 						{/* <button
