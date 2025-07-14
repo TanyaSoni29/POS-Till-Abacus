@@ -6,9 +6,9 @@ import { Search } from 'lucide-react';
 
 import { setSelectedCategory } from '../slices/categorySlice';
 import { updateOrder } from '../slices/orderSlice';
-import { OrderTabs } from '../components/OrderTabs';
-import { ProductCard as HospitalityProductCard } from '../components/Hospitality/ProductCard';
-import { ProductCard as RetailProductCard } from '../components/Retail/ProductCard';
+import { OrderTabs } from '../components/Home/OrderTabs';
+import { ProductCard as HospitalityProductCard } from '../components/Home/Hospitality/ProductCard';
+import { ProductCard as RetailProductCard } from '../components/Home/Retail/ProductCard';
 import { refreshTillProductShortcuts } from '../slices/productSlice';
 import AdvanceSearch from '../components/Home/AdvanceSearch';
 import { getTillProduct } from '../services/operations/tillApi';
@@ -36,7 +36,6 @@ export default function Home() {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [advanceSearchOpen, setAdvanceSearchOpen] = useState(false);
 	const activeOrder = orders.find((order) => order.id === activeOrderId);
-	console.log('Products:', products);
 	// Filter products based on search and category
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {

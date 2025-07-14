@@ -1,16 +1,6 @@
 /** @format */
 
 import {
-	// Plus,
-	// Minus,
-	CreditCard,
-	// Smartphone,
-	// Banknote,
-	Coffee,
-	Pizza,
-	Carrot,
-	Soup,
-	Wine,
 	Bike,
 	Accessibility,
 	Users,
@@ -25,9 +15,6 @@ import {
 	Panda,
 } from 'lucide-react';
 // import { useDispatch } from 'react-redux';
-import // decreaseOrderItemQuantity,
-// increaseOrderItemQuantity,
-'../../slices/orderSlice';
 
 export const ProductCard = ({
 	product,

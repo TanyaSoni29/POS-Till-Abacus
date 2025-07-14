@@ -7,7 +7,7 @@ import {
 	setActiveOrderId,
 	setNextOrderId,
 	setOrders,
-} from '../slices/orderSlice';
+} from '../../slices/orderSlice';
 
 export const OrderTabs = () => {
 	const dispatch = useDispatch();

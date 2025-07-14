@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import {
 	decreaseOrderItemQuantity,
 	increaseOrderItemQuantity,
-} from '../../slices/orderSlice';
+} from '../../../slices/orderSlice';
 
 export const ProductCard = ({
 	product,
