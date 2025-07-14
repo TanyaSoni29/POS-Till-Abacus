@@ -11,7 +11,7 @@ import {
 	X,
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import FormRow from '../common/FormRow';
+import FormRow from '../../ui/common/FormRow';
 import { useState } from 'react';
 
 export default function AddCustomerModal({ onclose }) {
