@@ -13,6 +13,8 @@ export const customerEndpoints = {
 export const tillEndpoints = {
 	GET_TILLS_PRODUCT_SHORTCUTS: (SetID) =>
 		`${BASE}/api/Till/getTillProductShortcuts?SetID=${SetID || 'A'}`,
+	GET_TILL_PRODUCT: (partnumber, locCode) =>
+		`${BASE}/api/Till/getTillProduct?partnumber=${partnumber}&locCode=${locCode}`,
 };
 
 export const PrtoductEndpoiunts = {

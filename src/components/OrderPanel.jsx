@@ -14,6 +14,7 @@ export const OrderPanel = ({
 	onPaymentComplete,
 	onClearCart,
 }) => {
+	console.log(cartItems);
 	const subtotal = cartItems.reduce(
 		(sum, item) =>
 			sum +

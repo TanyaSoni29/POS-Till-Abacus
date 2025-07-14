@@ -13,7 +13,7 @@ export default function CustomerSection({
 	const [addCustomerOpen, setAddCustomerOpen] = useState(false);
 
 	const filterCunstomers = customers.filter((customer) =>
-		customer.firstname.toLowerCase().includes(searchQuery.toLowerCase())
+		customer?.firstname.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
 	const handleClose = () => {
@@ -34,7 +34,9 @@ export default function CustomerSection({
 							className='text-blue-600'
 						/>
 						<span className='font-medium text-gray-900'>
-							{selectedCustomer?.firstname}
+							{selectedCustomer?.accNo === '00000'
+								? 'Walk In Customer'
+								: selectedCustomer?.firstname}
 						</span>
 					</div>
 
@@ -65,7 +67,7 @@ export default function CustomerSection({
 									/>
 									<input
 										type='text'
-										placeholder='Search products...'
+										placeholder='Search customers...'
 										value={searchQuery}
 										onChange={(e) => setSearchQuery(e.target.value)}
 										className='w-full pl-10 pr-4 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
@@ -104,7 +106,9 @@ export default function CustomerSection({
 									/>
 									<div>
 										<p className='font-medium text-gray-900'>
-											{customer?.firstname}
+											{customer.accNo === '00000'
+												? 'Walk In Customer'
+												: customer?.firstname}
 										</p>
 										{customer?.email && (
 											<p className='text-grey-700'>{customer?.email}</p>

@@ -22,12 +22,7 @@ export function refreshCustomers() {
 		try {
 			const response = await getCustomers();
 			if (response.status === 'success') {
-				dispatch(
-					setCustomers([
-						{ id: '0', firstname: 'Walk-in Customer', loyaltyPoints: 0, accNo: "00000" },
-						...response.data,
-					])
-				);
+				dispatch(setCustomers([...response.data]));
 			}
 		} catch (err) {
 			console.error('Error refreshing customers:', err);

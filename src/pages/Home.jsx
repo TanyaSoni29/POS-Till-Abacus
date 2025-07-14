@@ -11,6 +11,7 @@ import { ProductCard as HospitalityProductCard } from '../components/Hospitality
 import { ProductCard as RetailProductCard } from '../components/Retail/ProductCard';
 import { refreshTillProductShortcuts } from '../slices/productSlice';
 import AdvanceSearch from '../components/Home/AdvanceSearch';
+import { getTillProduct } from '../services/operations/tillApi';
 
 const getCategoryColor = (category) => {
 	const colors = {
@@ -58,18 +59,18 @@ export default function Home() {
 		);
 	};
 
-	const addToCart = async (product) => {
-		console.log('---', product);
+	const addToCart = async (addProduct) => {
 		if (!activeOrder) return;
-
+		const completeProduct = await getTillProduct(addProduct.partNumber, '01');
+		const product = completeProduct.data;
 		const existingItem = activeOrder.items.find(
-			(item) => item.product.partNumber === product.partNumber
+			(item) => item.product.partNumber === completeProduct.partNumber
 		);
 		let newItems;
 
 		if (existingItem) {
 			newItems = activeOrder.items.map((item) =>
-				item.product.partNumber === product.partNumber
+				item.product.partNumber === completeProduct.partNumber
 					? { ...item, quantity: item.quantity + 1 }
 					: item
 			);
