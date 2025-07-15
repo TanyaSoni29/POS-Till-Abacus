@@ -72,19 +72,6 @@ const orderSlice = createSlice({
 	},
 });
 
-// export function refreshOrders() {
-// 	return async (dispatch) => {
-// 		try {
-// 			const response = await getCustomers();
-// 			if (response.status === 'success') {
-// 				dispatch(setCustomers(response.data));
-// 			}
-// 		} catch (err) {
-// 			console.error('Error refreshing customers:', err);
-// 		}
-// 	};
-// }
-
 export const addToCart = (addProduct) => {
 	return async (dispatch, getStates) => {
 		const activeOrderId = getStates().order.activeOrderId;
@@ -116,6 +103,41 @@ export const addToCart = (addProduct) => {
 		} catch (error) {
 			console.log(error);
 		}
+	};
+};
+
+export const removeFromCart = (productId) => {
+	return async (dispatch, getStates) => {
+		const activeOrderId = getStates().order.activeOrderId;
+		const orders = getStates().order.orders || [];
+		const activeOrder = orders?.find((order) => order.id === activeOrderId);
+
+		if (!activeOrder) return;
+
+		const newItems = activeOrder.items.filter(
+			(item) => item.product.partNumber !== productId
+		);
+
+		dispatch(
+			updateOrder(
+				{ id: activeOrderId, updates: { items: newItems } } // Use object destructuring for clarity
+			)
+		);
+	};
+};
+
+export const clearCart = () => {
+	return async (dispatch, getStates) => {
+		const activeOrderId = getStates().order.activeOrderId;
+		const orders = getStates().order.orders || [];
+		const activeOrder = orders?.find((order) => order.id === activeOrderId);
+
+		if (!activeOrder) return;
+		dispatch(
+			updateOrder(
+				{ id: activeOrderId, updates: { items: [] } } // Use object destructuring for clarity
+			)
+		);
 	};
 };
 

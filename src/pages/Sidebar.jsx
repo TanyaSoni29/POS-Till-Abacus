@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { refreshCustomers } from '../slices/customerSlice';
 import { OrderPanel } from '../components/OrderPanel';
-import { setOrders, updateOrder } from '../slices/orderSlice';
+import { removeFromCart, setOrders, updateOrder } from '../slices/orderSlice';
 
 export default function Sidebar() {
 	const dispatch = useDispatch();
@@ -16,13 +16,8 @@ export default function Sidebar() {
 		dispatch(updateOrder({ id: orderId, updates }));
 	};
 
-	const removeFromCart = (productId) => {
-		if (!activeOrder) return;
-
-		const newItems = activeOrder.items.filter(
-			(item) => item.product.partNumber !== productId
-		);
-		updateOrderInStore(activeOrderId, { items: newItems });
+	const removeFromCartHandler = (productId) => {
+		dispatch(removeFromCart(productId));
 	};
 
 	const handlePaymentComplete = () => {
@@ -65,7 +60,7 @@ export default function Sidebar() {
 					cartItems={activeOrder.items}
 					selectedCustomer={activeOrder.customer}
 					onSelectCustomer={selectCustomer}
-					onRemoveItem={removeFromCart}
+					onRemoveItem={removeFromCartHandler}
 					onPaymentComplete={handlePaymentComplete}
 					onClearCart={clearCart}
 				/>
