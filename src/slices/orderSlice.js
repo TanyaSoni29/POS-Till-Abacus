@@ -1,6 +1,7 @@
 /** @format */
 
 import { createSlice } from '@reduxjs/toolkit';
+import { getTillProduct } from '../services/operations/tillApi';
 
 const initialState = {
 	orders: [],
@@ -83,6 +84,40 @@ const orderSlice = createSlice({
 // 		}
 // 	};
 // }
+
+export const addToCart = (addProduct) => {
+	return async (dispatch, getStates) => {
+		const activeOrderId = getStates().order.activeOrderId;
+		const orders = getStates().order.orders || [];
+		const activeOrder = orders?.find((order) => order.id === activeOrderId);
+		if (!activeOrder) return;
+		try {
+			const completeProduct = await getTillProduct(addProduct.partNumber, '01');
+			const product = completeProduct.data;
+			const existingItem = activeOrder.items.find(
+				(item) => item.product.partNumber === product.partNumber
+			);
+			let newItems;
+
+			if (existingItem) {
+				newItems = activeOrder.items.map((item) =>
+					item.product.partNumber === product.partNumber
+						? { ...item, quantity: item.quantity + 1 }
+						: item
+				);
+			} else {
+				newItems = [...activeOrder.items, { product, quantity: 1 }];
+			}
+			dispatch(
+				updateOrder(
+					{ id: activeOrderId, updates: { items: newItems } } // Use object destructuring for clarity
+				)
+			);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+};
 
 export const {
 	setOrders,

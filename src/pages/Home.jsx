@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Search } from 'lucide-react';
 
 import { setSelectedCategory } from '../slices/categorySlice';
-import { updateOrder } from '../slices/orderSlice';
+import { addToCart } from '../slices/orderSlice';
 import { OrderTabs } from '../components/Home/OrderTabs';
 import { ProductCard as HospitalityProductCard } from '../components/Home/Hospitality/ProductCard';
 import { ProductCard as RetailProductCard } from '../components/Home/Retail/ProductCard';
@@ -50,34 +50,8 @@ export default function Home() {
 		});
 	}, [products, searchQuery, selectedCategory]);
 
-	const updateOrderInStore = (orderId, updates) => {
-		dispatch(
-			updateOrder(
-				{ id: orderId, updates } // Use object destructuring for clarity
-			)
-		);
-	};
-
-	const addToCart = async (addProduct) => {
-		if (!activeOrder) return;
-		const completeProduct = await getTillProduct(addProduct.partNumber, '01');
-		const product = completeProduct.data;
-		const existingItem = activeOrder.items.find(
-			(item) => item.product.partNumber === product.partNumber
-		);
-		let newItems;
-
-		if (existingItem) {
-			newItems = activeOrder.items.map((item) =>
-				item.product.partNumber === product.partNumber
-					? { ...item, quantity: item.quantity + 1 }
-					: item
-			);
-		} else {
-			newItems = [...activeOrder.items, { product, quantity: 1 }];
-		}
-
-		updateOrderInStore(activeOrderId, { items: newItems });
+	const addToCartHandler = async (addProduct) => {
+		dispatch(addToCart(addProduct));
 	};
 
 	const getCartQuantity = (productId) => {
@@ -97,7 +71,7 @@ export default function Home() {
 				const response = await getTillProduct(searchQuery, '01');
 				const product = response.data;
 				if (!product) throw new Error('Product not found');
-				await addToCart(product); // ✅ Reuse existing logic
+				await addToCartHandler(product); // ✅ Reuse existing logic
 				setSearchQuery(''); // Optional: clear search field
 			} catch (error) {
 				console.log(error);
@@ -192,7 +166,7 @@ export default function Home() {
 								key={product.partNumber}
 								product={product}
 								activeOrder={activeOrder}
-								onAddToCart={addToCart}
+								onAddToCart={addToCartHandler}
 								cartQuantity={getCartQuantity(product.partNumber)}
 							/>
 						))}
@@ -226,7 +200,7 @@ export default function Home() {
 								key={product.partNumber}
 								product={product}
 								activeOrder={activeOrder}
-								onAddToCart={addToCart}
+								onAddToCart={addToCartHandler}
 								cartQuantity={getCartQuantity(product.partNumber)}
 							/>
 						))}
