@@ -3,6 +3,27 @@
 import { Check, CheckCheck, X } from 'lucide-react';
 import { useState } from 'react';
 
+const calButtons = [
+	'1',
+	'2',
+	'3',
+	'£5',
+	'4',
+	'5',
+	'6',
+	'£10',
+	'7',
+	'8',
+	'9',
+	'£20',
+	'.',
+	'0',
+	'<',
+	'£50',
+];
+
+const paymentMethodBtn = ['CASH', 'CARD', 'INTEGRATED CARD', 'CREDIT'];
+
 export default function Checkout({ onclose }) {
 	const [activeTab, setActiveTab] = useState('express');
 	const [expressInputValue, setExpressInputValue] = useState('0.00');
@@ -120,25 +141,9 @@ export default function Checkout({ onclose }) {
 											CANCEL
 										</button>
 									</div>
+									{/* Cal Buttons */}
 									<div className='grid grid-cols-4 gap-2'>
-										{[
-											'1',
-											'2',
-											'3',
-											'£5',
-											'4',
-											'5',
-											'6',
-											'£10',
-											'7',
-											'8',
-											'9',
-											'£20',
-											'.',
-											'0',
-											'<',
-											'£50',
-										].map((btn, i) => (
+										{calButtons.map((btn, i) => (
 											<button
 												key={i}
 												onClick={() => handleButtonClick(btn)}
@@ -152,16 +157,14 @@ export default function Checkout({ onclose }) {
 							</div>
 							{/* Right Panel - Payment Methods */}
 							<div className='grid grid-cols-4 col-span-4 gap-3 items-start'>
-								{['CASH', 'CARD', 'INTEGRATED CARD', 'CREDIT'].map(
-									(method, i) => (
-										<button
-											key={i}
-											className='col-span-1 py-3 px-2 bg-white border border-gray-200 rounded-lg hover:border-blue-400 font-semibold'
-										>
-											{method}
-										</button>
-									)
-								)}
+								{paymentMethodBtn.map((method, i) => (
+									<button
+										key={i}
+										className='col-span-1 py-3 px-2 bg-white border border-gray-200 rounded-lg hover:border-blue-400 font-semibold'
+									>
+										{method}
+									</button>
+								))}
 							</div>
 						</div>
 					)}
@@ -252,26 +255,9 @@ export default function Checkout({ onclose }) {
 											</button>
 										</div>
 									</div>
-
+									{/* Cal Buttons */}
 									<div className='grid grid-cols-4 gap-2'>
-										{[
-											'1',
-											'2',
-											'3',
-											'£5',
-											'4',
-											'5',
-											'6',
-											'£10',
-											'7',
-											'8',
-											'9',
-											'£20',
-											'.',
-											'0',
-											'<',
-											'£50',
-										].map((btn, i) => (
+										{calButtons.map((btn, i) => (
 											<button
 												key={i}
 												className='py-3 text-center bg-white border border-gray-200 rounded-lg hover:bg-gray-100 text-lg font-semibold'

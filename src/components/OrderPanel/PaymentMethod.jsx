@@ -18,7 +18,7 @@ import {
 // 	createSale,
 // } from '../../services/operations/salesApi';
 // import { refreshTillProductShortcuts } from '../../slices/productSlice';
-import ThankYou from './ThankYou';
+// import ThankYou from './ThankYou';
 import Checkout from './Checkout';
 
 export default function PaymentMethod({
