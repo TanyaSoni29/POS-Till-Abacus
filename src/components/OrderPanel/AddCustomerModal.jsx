@@ -4,7 +4,7 @@ import {
 	ArrowRight,
 	Contact,
 	CopyCheck,
-	Notebook,
+	// Notebook,
 	Save,
 	Truck,
 	UserPen,

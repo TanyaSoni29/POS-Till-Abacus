@@ -2,7 +2,6 @@
 import { X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import FormRow from '../../ui/common/FormRow';
-
 export default function AdvanceSearch({ setAdvanceSearchOpen }) {
 	const {
 		register,
@@ -17,7 +16,7 @@ export default function AdvanceSearch({ setAdvanceSearchOpen }) {
 	const close = () => setAdvanceSearchOpen(false);
 	return (
 		<div
-			className='fixed inset-0 flex justify-center items-center bg-gray-200/25'
+			className='fixed inset-0 flex justify-center items-center bg-black/25 z-50 overflow-visible'
 			onClick={close}
 		>
 			<div
@@ -98,6 +97,153 @@ export default function AdvanceSearch({ setAdvanceSearchOpen }) {
 								/>
 							</FormRow>
 						</div>
+						<div className='flex items-center gap-2'>
+							<FormRow
+								label='MFR No'
+								error={errors?.mfrNumber?.message}
+							>
+								<input
+									type='text'
+									placeholder='Enter MfrNumber..'
+									{...register('mfrNumber', {
+										required: 'This field is required.',
+									})}
+									className='w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+								/>
+							</FormRow>
+
+							<FormRow
+								label='Details'
+								error={errors?.details?.message}
+							>
+								<input
+									type='text'
+									placeholder='Enter Details..'
+									{...register('details')}
+									className='w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+								/>
+							</FormRow>
+							<div className='flex items-center gap-2 w-full'>
+								<FormRow
+									label='Size'
+									error={errors?.size?.message}
+								>
+									<input
+										type='text'
+										placeholder='Enter Size..'
+										{...register('size')}
+										className='w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+									/>
+								</FormRow>
+
+								<FormRow
+									label='Color'
+									error={errors?.color?.message}
+								>
+									<input
+										type='text'
+										placeholder='Enter Color..'
+										{...register('color', {
+											required: 'This field is required.',
+										})}
+										className='w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+									/>
+								</FormRow>
+							</div>
+							<div className='flex items-center gap-2 w-full'>
+								<FormRow
+									label='Gender'
+									error={errors?.gender?.message}
+								>
+									<input
+										type='text'
+										placeholder='Enter Gender..'
+										{...register('gender')}
+										className='w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+									/>
+								</FormRow>
+
+								<FormRow
+									label='Year'
+									error={errors?.year?.message}
+								>
+									<input
+										type='text'
+										placeholder='Enter Year..'
+										{...register('year', {
+											required: 'This field is required.',
+										})}
+										className='w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+									/>
+								</FormRow>
+							</div>
+						</div>
+
+						<div className='flex items-center gap-2'>
+							<FormRow label='Stock Filter'>
+								<div className='border border-gray-300 rounded-lg p-2 space-y-2 w-full flex items-center gap-2 justify-between'>
+									<div>
+										<label className='flex items-center gap-2'>
+											<input
+												type='radio'
+												value='all'
+												{...register('stockFilter')}
+												defaultChecked
+											/>
+											<span className='text-blue-600 font-semibold'>
+												ALL PRODUCTS
+											</span>
+										</label>
+									</div>
+									<div>
+										<label className='flex items-center gap-2'>
+											<input
+												type='radio'
+												value='allShops'
+												{...register('stockFilter')}
+											/>
+											<span>STOCK (ALL SHOPS)</span>
+										</label>
+									</div>
+									<div>
+										<label className='flex items-center gap-2'>
+											<input
+												type='radio'
+												value='here'
+												{...register('stockFilter')}
+											/>
+											<span>STOCK HERE</span>
+										</label>
+									</div>
+									<div className='flex items-center gap-2'>
+										<label className='flex items-center gap-2'>
+											<input
+												type='radio'
+												value='stockAt'
+												{...register('stockFilter')}
+											/>
+											<span>STOCK AT</span>
+										</label>
+										<input
+											type='text'
+											placeholder='Shop ID'
+											{...register('stockAtValue')}
+											className='w-16 px-1 py-0.5 border border-gray-300 rounded'
+										/>
+									</div>
+									<div>
+										<label className='flex items-center gap-2'>
+											<input
+												type='radio'
+												value='notInStock'
+												{...register('stockFilter')}
+											/>
+											<span>NOT IN STOCK (ALL SHOPS)</span>
+										</label>
+									</div>
+								</div>
+							</FormRow>
+						</div>
 
 						<div className='w-full flex gap-2 justify-end items-center'>
 							<button
@@ -115,6 +261,8 @@ export default function AdvanceSearch({ setAdvanceSearchOpen }) {
 							</button>
 						</div>
 					</form>
+
+					<div className='w-full flex items-center overflow-x-auto'>Table</div>
 				</div>
 			</div>
 		</div>
