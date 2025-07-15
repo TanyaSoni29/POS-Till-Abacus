@@ -63,7 +63,6 @@ export default function Sidebar() {
 				<OrderPanel
 					activeOrder={activeOrder}
 					cartItems={activeOrder.items}
-					customers={customers}
 					selectedCustomer={activeOrder.customer}
 					onSelectCustomer={selectCustomer}
 					onRemoveItem={removeFromCart}

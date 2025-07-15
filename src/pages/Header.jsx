@@ -3,6 +3,7 @@
 import StoreMallDirectoryOutlinedIcon from '@mui/icons-material/StoreMallDirectoryOutlined';
 import { useDispatch } from 'react-redux';
 import { setActivePanel } from '../slices/settingSlice';
+import { LogOut, SquareArrowRight } from 'lucide-react';
 export default function Header() {
 	const dispatch = useDispatch();
 	return (
@@ -38,6 +39,9 @@ export default function Header() {
 					<div className='flex items-center gap-2 text-gray-600'>
 						<div className='w-8 h-8 bg-gray-300 rounded-full'></div>
 						<span className='font-medium'>John Doe</span>
+					</div>
+					<div className='text-gray-600'>
+						<LogOut size={20} />
 					</div>
 				</div>
 			</div>

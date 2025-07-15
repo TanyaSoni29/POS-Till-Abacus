@@ -7,7 +7,6 @@ import CartItemCard from './OrderPanel/CartItemCard';
 export const OrderPanel = ({
 	activeOrder,
 	cartItems,
-	customers,
 	selectedCustomer,
 	onSelectCustomer,
 	onRemoveItem,
@@ -31,7 +30,6 @@ export const OrderPanel = ({
 			<CustomerSection
 				selectedCustomer={selectedCustomer}
 				onSelectCustomer={onSelectCustomer}
-				customers={customers}
 			/>
 
 			{/* Order Items */}

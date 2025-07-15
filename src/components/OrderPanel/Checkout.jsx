@@ -1,7 +1,8 @@
 /** @format */
 
 import { Check, CheckCheck, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const calButtons = [
 	'1',
@@ -22,11 +23,33 @@ const calButtons = [
 	'£50',
 ];
 
+const paymentTypesInput = [
+	'CASH',
+	'CHEQUE',
+	'MASTERCARD',
+	'VISA',
+	'VOUCHER',
+	'CREDIT',
+	'SWITCH',
+	'CONNECT',
+	'PAYPAL',
+	'SAGEPAY',
+	'OWN CARD',
+	'OTHER',
+	'DEPOSIT',
+	'GIANT C & C',
+	'CYCLE SCHEME',
+	'LOYALTY POINTS',
+];
+
 const paymentMethodBtn = ['CASH', 'CARD', 'INTEGRATED CARD', 'CREDIT'];
 
 export default function Checkout({ onclose }) {
+	const { activeOrderId, orders } = useSelector((state) => state.order);
 	const [activeTab, setActiveTab] = useState('express');
 	const [expressInputValue, setExpressInputValue] = useState('0.00');
+
+	const activeOrder = orders.find((order) => order.id === activeOrderId);
 	const tabs = [
 		{ key: 'express', label: 'Express Checkout', icon: <Check size={20} /> },
 		{
@@ -56,6 +79,21 @@ export default function Checkout({ onclose }) {
 			});
 		}
 	};
+
+	const amountDue = activeOrder.items.reduce(
+		(acc, item) => acc + (item.product?.storePrice || item.product.promoPrice),
+		0
+	);
+
+	const calChange = Math.max(
+		0,
+		parseFloat(expressInputValue || '0') - amountDue
+	);
+
+	useEffect(() => {
+		setExpressInputValue(amountDue.toFixed(2));
+	}, [amountDue]);
+
 	return (
 		<div
 			className='fixed inset-0 flex justify-center items-center bg-black/25 overflow-hidden'
@@ -112,11 +150,13 @@ export default function Checkout({ onclose }) {
 									<h3 className='text-lg font-semibold'>Summary</h3>
 									<div className='flex justify-between'>
 										<span className='text-gray-700'>Amount Due:</span>
-										<span className='font-bold text-lg text-black'>£25.00</span>
+										<span className='font-bold text-lg text-black'>
+											£{amountDue}
+										</span>
 									</div>
 									<div className='flex justify-between'>
 										<span className='text-gray-700'>V.A.T.:</span>
-										<span className='text-gray-700'>£4.99</span>
+										<span className='text-gray-700'>£0.00</span>
 									</div>
 									<div className='flex justify-between'>
 										<span className='text-gray-700'>Discounts:</span>
@@ -124,7 +164,7 @@ export default function Checkout({ onclose }) {
 									</div>
 									<div className='flex justify-between'>
 										<span className='text-red-600 font-semibold'>Change:</span>
-										<span className='text-red-600 font-bold'>£0.00</span>
+										<span className='text-red-600 font-bold'>£{calChange}</span>
 									</div>
 								</div>
 
@@ -174,24 +214,7 @@ export default function Checkout({ onclose }) {
 								{/* Left Panel: Payment Type Inputs */}
 								<div className='space-y-2'>
 									<h3 className='font-bold text-blue-600 mb-2'>PAYMENT TYPE</h3>
-									{[
-										'CASH',
-										'CHEQUE',
-										'MASTERCARD',
-										'VISA',
-										'VOUCHER',
-										'CREDIT',
-										'SWITCH',
-										'CONNECT',
-										'PAYPAL',
-										'SAGEPAY',
-										'OWN CARD',
-										'OTHER',
-										'DEPOSIT',
-										'GIANT C & C',
-										'CYCLE SCHEME',
-										'LOYALTY POINTS',
-									].map((type) => (
+									{paymentTypesInput.map((type) => (
 										<div
 											key={type}
 											className='flex items-center justify-between'

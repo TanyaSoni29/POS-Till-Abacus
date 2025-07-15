@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { ChevronDown, Plus, Search, User, Users } from 'lucide-react';
 import AddCustomerModal from './AddCustomerModal';
+import { useSelector } from 'react-redux';
 export default function CustomerSection({
 	selectedCustomer,
 	onSelectCustomer,
-	customers,
 }) {
+	const { customers } = useSelector((state) => state.customer);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isCustomerDropdownOpen, setIsCustomerDropdownOpen] = useState(false);
 	const [addCustomerOpen, setAddCustomerOpen] = useState(false);
