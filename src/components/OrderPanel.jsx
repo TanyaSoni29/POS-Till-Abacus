@@ -9,9 +9,7 @@ export const OrderPanel = ({
 	cartItems,
 	selectedCustomer,
 	onSelectCustomer,
-	onRemoveItem,
 	onPaymentComplete,
-	onClearCart,
 }) => {
 	const subtotal = cartItems.reduce(
 		(sum, item) =>
@@ -50,7 +48,6 @@ export const OrderPanel = ({
 									key={item.product.partNumber}
 									item={item}
 									activeOrder={activeOrder}
-									onRemoveItem={onRemoveItem}
 									cartItems={cartItems}
 								/>
 							))}
@@ -83,7 +80,6 @@ export const OrderPanel = ({
 					selectedCustomer={selectedCustomer}
 					cartItems={cartItems}
 					onPaymentComplete={onPaymentComplete}
-					onClearCart={onClearCart}
 				/>
 			)}
 		</div>

@@ -7,13 +7,13 @@ import { Plus, Minus, Trash2, ChevronDown } from 'lucide-react';
 import {
 	decreaseOrderItemQuantity,
 	increaseOrderItemQuantity,
+	removeFromCart,
 	updateOrder,
 } from '../../slices/orderSlice';
 
 export default function CartItemCard({
 	item,
 	activeOrder,
-	onRemoveItem,
 	cartItems,
 }) {
 	const dispatch = useDispatch();
@@ -169,7 +169,7 @@ export default function CartItemCard({
 						/>
 					</span>
 					<button
-						onClick={() => onRemoveItem(item.product.partNumber)}
+						onClick={() => dispatch(removeFromCart(item.product.partNumber))}
 						className='w-6 h-6 rounded bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center'
 					>
 						<Trash2 size={12} />

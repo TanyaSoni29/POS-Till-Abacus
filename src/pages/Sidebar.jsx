@@ -4,22 +4,13 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { refreshCustomers } from '../slices/customerSlice';
 import { OrderPanel } from '../components/OrderPanel';
-import {
-	clearCart,
-	removeFromCart,
-	setOrders,
-	updateOrder,
-} from '../slices/orderSlice';
+import { setOrders, updateOrder } from '../slices/orderSlice';
 
 export default function Sidebar() {
 	const dispatch = useDispatch();
 	const customers = useSelector((state) => state.customer.customers);
 	const { activeOrderId, orders } = useSelector((state) => state.order);
 	const activeOrder = orders.find((order) => order.id === activeOrderId);
-
-	const removeFromCartHandler = (productId) => {
-		dispatch(removeFromCart(productId));
-	};
 
 	const handlePaymentComplete = () => {
 		// Clear the current order after payment
@@ -28,11 +19,6 @@ export default function Sidebar() {
 				{ id: activeOrderId, updates: { items: [] } } // Use object destructuring for clarity
 			)
 		);
-	};
-
-	const clearCartHandler = () => {
-		if (!activeOrder) return;
-		dispatch(clearCart());
 	};
 
 	const selectCustomer = (customer) => {
@@ -65,9 +51,7 @@ export default function Sidebar() {
 					cartItems={activeOrder.items}
 					selectedCustomer={activeOrder.customer}
 					onSelectCustomer={selectCustomer}
-					onRemoveItem={removeFromCartHandler}
 					onPaymentComplete={handlePaymentComplete}
-					onClearCart={clearCartHandler}
 				/>
 			)}
 		</div>

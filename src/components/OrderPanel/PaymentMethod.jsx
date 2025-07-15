@@ -1,7 +1,7 @@
 /** @format */
 
 import { useState } from 'react';
-// import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
 	CreditCard,
 	// Banknote,
@@ -20,14 +20,14 @@ import {
 // import { refreshTillProductShortcuts } from '../../slices/productSlice';
 // import ThankYou from './ThankYou';
 import Checkout from './Checkout';
+import { clearCart } from '../../slices/orderSlice';
 
 export default function PaymentMethod({
 	// selectedCustomer,
 	cartItems,
 	// onPaymentComplete,
-	onClearCart,
 }) {
-	// const dispatch = useDispatch();
+	const dispatch = useDispatch();
 	// const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 	// const [isProcessing, setIsProcessing] = useState(false);
 	// const [isComplete, setIsComplete] = useState(false);
@@ -173,7 +173,7 @@ export default function PaymentMethod({
 						Hold
 					</button>
 					<button
-						onClick={onClearCart}
+						onClick={() => dispatch(clearCart())}
 						className='py-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2'
 					>
 						<TextQuote size={16} />
@@ -182,7 +182,7 @@ export default function PaymentMethod({
 				</div>
 
 				<button
-					onClick={() => {}}
+					onClick={() => dispatch(clearCart())}
 					className='w-full bg-gray-700 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
 				>
 					<X size={20} />
