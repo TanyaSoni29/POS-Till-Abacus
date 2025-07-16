@@ -37,35 +37,27 @@ const orderSlice = createSlice({
 		},
 		increaseOrderItemQuantity(state, action) {
 			const { orderId, productId } = action.payload;
-			const orderIndex = state.orders.findIndex(
-				(order) => order.id === orderId
+			const order = state.orders.find((order) => order.id === orderId);
+			if (!order) return;
+
+			const item = order.items.find(
+				(item) => item.product.partNumber === productId
 			);
-			if (orderIndex !== -1) {
-				const item = state.orders[orderIndex].items.find(
-					(item) => item.product.partNumber === productId
-				);
-				if (item) {
-					item.quantity++;
-				}
-			}
+			if (item) item.quantity++;
 		},
 		decreaseOrderItemQuantity(state, action) {
 			const { orderId, productId } = action.payload;
-			const orderIndex = state.orders.findIndex(
-				(order) => order.id === orderId
+			const order = state.orders.find((order) => order.id === orderId);
+			if (!order) return;
+
+			const itemIndex = order.items.findIndex(
+				(item) => item.product.partNumber === productId
 			);
-			if (orderIndex !== -1) {
-				const item = state.orders[orderIndex].items.find(
-					(item) => item.product.partNumber === productId
-				);
-				if (item) {
-					item.quantity--;
-					if (item.quantity <= 0) {
-						// Remove item if quantity is 0 or less
-						state.orders[orderIndex].items = state.orders[
-							orderIndex
-						].items.filter((i) => i.product.partNumber !== productId);
-					}
+			if (itemIndex !== -1) {
+				const item = order.items[itemIndex];
+				item.quantity--;
+				if (item.quantity <= 0) {
+					order.items.splice(itemIndex, 1);
 				}
 			}
 		},
@@ -73,10 +65,10 @@ const orderSlice = createSlice({
 });
 
 export const addToCart = (addProduct) => {
-	return async (dispatch, getStates) => {
-		const activeOrderId = getStates().order.activeOrderId;
-		const orders = getStates().order.orders || [];
-		const activeOrder = orders?.find((order) => order.id === activeOrderId);
+	return async (dispatch, getState) => {
+		const activeOrderId = getState().order.activeOrderId;
+		const orders = getState().order.orders || [];
+		const activeOrder = orders.find((order) => order.id === activeOrderId);
 		if (!activeOrder) return;
 		try {
 			const completeProduct = await getTillProduct(addProduct.partNumber, '01');
@@ -93,7 +85,15 @@ export const addToCart = (addProduct) => {
 						: item
 				);
 			} else {
-				newItems = [...activeOrder.items, { product, quantity: 1 }];
+				newItems = [
+					...activeOrder.items,
+					{
+						product,
+						quantity: 1,
+						originalPrice: product.storePrice || product.promoPrice,
+						changedPrice: product.storePrice || product.promoPrice,
+					},
+				];
 			}
 			dispatch(
 				updateOrder(
@@ -107,9 +107,8 @@ export const addToCart = (addProduct) => {
 };
 
 export const removeFromCart = (productId) => {
-	return async (dispatch, getStates) => {
-		const activeOrderId = getStates().order.activeOrderId;
-		const orders = getStates().order.orders || [];
+	return async (dispatch, getState) => {
+		const { activeOrderId, orders } = getState().order;
 		const activeOrder = orders?.find((order) => order.id === activeOrderId);
 
 		if (!activeOrder) return;
@@ -129,10 +128,6 @@ export const removeFromCart = (productId) => {
 export const clearCart = () => {
 	return async (dispatch, getStates) => {
 		const activeOrderId = getStates().order.activeOrderId;
-		const orders = getStates().order.orders || [];
-		const activeOrder = orders?.find((order) => order.id === activeOrderId);
-
-		if (!activeOrder) return;
 		dispatch(
 			updateOrder(
 				{ id: activeOrderId, updates: { items: [] } } // Use object destructuring for clarity

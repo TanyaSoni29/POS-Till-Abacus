@@ -11,11 +11,7 @@ import {
 	updateOrder,
 } from '../../slices/orderSlice';
 
-export default function CartItemCard({
-	item,
-	activeOrder,
-	cartItems,
-}) {
+export default function CartItemCard({ item, activeOrder, cartItems }) {
 	const dispatch = useDispatch();
 	const [isDiscountOpen, setIsDiscountOpen] = useState({
 		itemId: null,
@@ -28,47 +24,19 @@ export default function CartItemCard({
 	const UpdateOrderPrices = (product) => {
 		if (!activeOrder) return;
 
-		const existingItem = activeOrder.items.find(
-			(item) => item.product.partNumber === product.partNumber
+		const updatedItems = activeOrder.items.map((i) =>
+			i.product.partNumber === product.partNumber
+				? {
+						...i,
+						changedPrice:
+							(changePrices[product.partNumber] || i.originalPrice) *
+							(1 - (discounts[product.partNumber] || 0) / 100),
+				  }
+				: i
 		);
-		let newItems;
-		const finalPrice =
-			(changePrices[product.partNumber] ||
-				product.price ||
-				product.promoPrice ||
-				0) *
-			(1 - (discounts[product.partNumber] || 0) / 100);
-
-		if (existingItem) {
-			newItems = activeOrder.items.map((item) =>
-				item.product.partNumber === product.partNumber
-					? {
-							...item,
-							product: {
-								...item.product,
-								price: parseFloat(finalPrice?.toFixed(2)),
-							},
-					  }
-					: item
-			);
-		} else {
-			newItems = [
-				...activeOrder.items,
-				{
-					product: {
-						...product,
-						price: finalPrice,
-					},
-					quantity: 1,
-				},
-			];
-		}
 
 		dispatch(
-			updateOrder({
-				id: activeOrder.id,
-				updates: { items: newItems },
-			})
+			updateOrder({ id: activeOrder.id, updates: { items: updatedItems } })
 		);
 	};
 
@@ -80,17 +48,17 @@ export default function CartItemCard({
 			if (item) {
 				setChangePrices((prev) => ({
 					...prev,
-					[item.product.partNumber]: item.product.price
-						? item.product.price
-						: item.product.promoPrice,
+					[item.product.partNumber]: item.changedPrice ?? item.originalPrice,
 				}));
 				setDiscounts((prev) => ({
 					...prev,
-					[item.product.partNumber]: item.product.discount || 0,
+					[item.product.partNumber]: 0,
 				}));
 			}
 		}
 	}, [cartItems, isDiscountOpen]);
+
+	const effectivePrice = item.changedPrice ?? item.originalPrice;
 
 	return (
 		<>
@@ -103,11 +71,7 @@ export default function CartItemCard({
 						{item.product.partNumber}
 					</h4>
 					<p className='text-sm text-gray-600'>
-						$
-						{item?.product?.price
-							? item?.product?.price?.toFixed(2)
-							: item?.product?.promoPrice?.toFixed(2)}{' '}
-						each
+						${effectivePrice?.toFixed(2)} each
 					</p>
 				</div>
 				<div className='flex items-center gap-2'>
@@ -139,21 +103,15 @@ export default function CartItemCard({
 						<Plus size={12} />
 					</button>
 					<span className='w-16 text-right font-medium'>
-						$
-						{(
-							(item.product.price
-								? item.product.price
-								: item.product.promoPrice) * item.quantity
-						).toFixed(2)}
+						${(item.quantity * effectivePrice).toFixed(2)}
 					</span>
 					<span
 						onClick={() =>
 							setIsDiscountOpen({
 								itemId: item.product.partNumber,
-								open: !(
-									isDiscountOpen.open &&
-									isDiscountOpen.itemId === item.product.partNumber
-								),
+								open:
+									isDiscountOpen.itemId !== item.product.partNumber ||
+									!isDiscountOpen.open,
 							})
 						}
 						className='cursor-pointer'
@@ -181,6 +139,18 @@ export default function CartItemCard({
 				isDiscountOpen.open && (
 					<div className='border border-gray-100 rounded-lg overflow-hidden'>
 						<div className='flex flex-col items-center justify-between bg-gray-100 px-4 pt-4 pb-2'>
+							<div className='w-full'>
+								<h4 className='font-medium text-sm text-gray-900 mb-2'>
+									Original Price
+								</h4>
+								<input
+									type='number'
+									value={item.originalPrice?.toFixed(2)}
+									placeholder='Enter discount code'
+									className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2 cursor-not-allowed'
+									disabled
+								/>
+							</div>
 							<div className='grid grid-cols-2 gap-4'>
 								<div>
 									<h4 className='font-medium text-sm text-gray-900 mb-2'>
@@ -192,10 +162,7 @@ export default function CartItemCard({
 										placeholder='Enter discount code'
 										className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
 										value={
-											changePrices[item.product.partNumber] ??
-											(item.product.price
-												? item.product.price
-												: item.product.promoPrice)
+											changePrices[item.product.partNumber] ?? item.changedPrice
 										}
 										onChange={(e) =>
 											setChangePrices((changePrices) => ({
@@ -221,10 +188,7 @@ export default function CartItemCard({
 										max={100}
 										placeholder='Enter discount code'
 										className='w-full px-3 py-1 border border-gray-300 rounded-lg mb-2'
-										value={
-											discounts[item.product.partNumber] ??
-											item.product.discount
-										}
+										value={discounts[item.product.partNumber] ?? 0}
 										onChange={(e) =>
 											setDiscounts((discounts) => ({
 												...discounts,
@@ -254,13 +218,22 @@ export default function CartItemCard({
 								<button
 									className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer'
 									onClick={() => {
-										setChangePrices((changePrices) => ({
-											...changePrices,
-											[item.product.partNumber]: item.product.price
-												? item.product.price
-												: item.product.promoPrice,
+										setChangePrices((prev) => ({
+											...prev,
+											[item.product.partNumber]: item.originalPrice,
 										}));
-										UpdateOrderPrices(item.product);
+										dispatch(
+											updateOrder({
+												id: activeOrder.id,
+												updates: {
+													items: activeOrder.items.map((i) =>
+														i.product.partNumber === item.product.partNumber
+															? { ...i, changedPrice: i.originalPrice }
+															: i
+													),
+												},
+											})
+										);
 									}}
 								>
 									{' '}
@@ -284,33 +257,13 @@ export default function CartItemCard({
 						<div className='text-sm text-gray-600 bg-white p-4 divide-y divide-gray-200'>
 							<div className='flex justify-between items-center gap-2'>
 								<p>
-									Base: {item.quantity} X{' '}
-									{(item.product.price
-										? item?.product?.price
-										: item.product.promoPrice
-									)?.toFixed(2)}
+									Base: {item.quantity} X ${item.originalPrice?.toFixed(2)}
 								</p>
-								<p>
-									$
-									{(
-										item.quantity *
-										(item.product.price
-											? item.product.price
-											: item.product.promoPrice)
-									)?.toFixed(2)}
-								</p>
+								<p>${(item.quantity * item.originalPrice).toFixed(2)}</p>
 							</div>
 							<div className='flex justify-between items-center gap-2 font-medium text-gray-800'>
 								<p>Item Total</p>
-								<p>
-									$
-									{(
-										item.quantity *
-										(item.product.price
-											? item.product.price
-											: item.product.promoPrice)
-									)?.toFixed(2)}
-								</p>
+								<p>${(item.quantity * effectivePrice).toFixed(2)}</p>
 							</div>
 						</div>
 					</div>
