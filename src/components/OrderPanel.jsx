@@ -13,12 +13,8 @@ export const OrderPanel = ({
 }) => {
 	const subtotal = cartItems.reduce((sum, item) => {
 		const price =
-			item.changedPrice ??
-			item.originalPrice ??
-			item.product.price ??
-			item.product.storePrice ??
-			item.product.promoPrice ??
-			0;
+			item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0;
+
 		return sum + price * item.quantity;
 	}, 0);
 	const taxRate = 0.2; // 20%

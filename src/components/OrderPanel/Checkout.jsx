@@ -58,19 +58,17 @@ export default function Checkout({ onclose }) {
 			icon: <CheckCheck size={20} />,
 		},
 	];
+
 	const handleButtonClick = (btn) => {
 		if (btn.startsWith('£')) {
-			// Overwrite with currency value
 			const numericValue = btn.replace('£', '');
 			setExpressInputValue(parseFloat(numericValue).toFixed(2));
 		} else if (btn === '<') {
-			// Backspace
 			setExpressInputValue((prev) => {
 				const newVal = prev.slice(0, -1);
 				return newVal === '' ? '0.00' : newVal;
 			});
-		} else {
-			// Append digits or decimal
+		} else if (!isNaN(btn)) {
 			setExpressInputValue((prev) => {
 				let newVal = prev === '0.00' || prev === '0' ? btn : prev + btn;
 				// Prevent multiple decimals
@@ -82,13 +80,17 @@ export default function Checkout({ onclose }) {
 
 	const subtotal = activeOrder?.items.reduce((sum, item) => {
 		const price =
-			item.changedPrice ??
-			item.originalPrice ??
-			item.product.price ??
-			item.product.storePrice ??
-			item.product.promoPrice ??
-			0;
+			item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0;
 		return sum + price * item.quantity;
+	}, 0);
+
+	const discountTotal = activeOrder.items.reduce((acc, item) => {
+		const original =
+			(item.originalPrice ?? item.product.price ?? 0) * item.quantity;
+		const changed =
+			(item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0) *
+			item.quantity;
+		return acc + (original - changed);
 	}, 0);
 
 	const taxRate = 0.2; // 20%
@@ -160,16 +162,18 @@ export default function Checkout({ onclose }) {
 									<div className='flex justify-between'>
 										<span className='text-gray-700'>Amount Due:</span>
 										<span className='font-bold text-lg text-black'>
-											£{amountDue}
+											£{amountDue?.toFixed(2)}
 										</span>
 									</div>
 									<div className='flex justify-between'>
 										<span className='text-gray-700'>V.A.T.:</span>
-										<span className='text-gray-700'>£0.00</span>
+										<span className='text-gray-700'>£{tax?.toFixed(2)}</span>
 									</div>
 									<div className='flex justify-between'>
 										<span className='text-gray-700'>Discounts:</span>
-										<span className='text-gray-700'>£0.00</span>
+										<span className='text-gray-700'>
+											£{discountTotal.toFixed(2)}
+										</span>
 									</div>
 									<div className='flex justify-between'>
 										<span className='text-red-600 font-semibold'>Change:</span>

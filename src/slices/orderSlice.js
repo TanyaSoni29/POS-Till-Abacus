@@ -90,8 +90,8 @@ export const addToCart = (addProduct) => {
 					{
 						product,
 						quantity: 1,
-						originalPrice: product.storePrice || product.promoPrice,
-						changedPrice: product.storePrice || product.promoPrice,
+						originalPrice: product.price,
+						changedPrice: product.price,
 					},
 				];
 			}
