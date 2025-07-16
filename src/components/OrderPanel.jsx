@@ -11,14 +11,17 @@ export const OrderPanel = ({
 	onSelectCustomer,
 	onPaymentComplete,
 }) => {
-	const subtotal = cartItems.reduce(
-		(sum, item) =>
-			sum +
-			(item.product.price ? item.product.price : item.product.promoPrice) *
-				item.quantity,
-		0
-	);
-	const taxRate = 0.085; // 8.5%
+	const subtotal = cartItems.reduce((sum, item) => {
+		const price =
+			item.changedPrice ??
+			item.originalPrice ??
+			item.product.price ??
+			item.product.storePrice ??
+			item.product.promoPrice ??
+			0;
+		return sum + price * item.quantity;
+	}, 0);
+	const taxRate = 0.2; // 20%
 	const tax = subtotal * taxRate;
 	const total = subtotal + tax;
 
@@ -63,7 +66,7 @@ export const OrderPanel = ({
 							<span>${subtotal?.toFixed(2)}</span>
 						</div>
 						<div className='flex justify-between text-sm'>
-							<span>VAT (8.5%):</span>
+							<span>VAT (20%):</span>
 							<span>${tax?.toFixed(2)}</span>
 						</div>
 						<div className='flex justify-between font-bold text-lg border-t border-gray-200 pt-2'>

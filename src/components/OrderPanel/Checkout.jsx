@@ -80,15 +80,24 @@ export default function Checkout({ onclose }) {
 		}
 	};
 
-	const amountDue = activeOrder.items.reduce(
-		(acc, item) => acc + (item.product?.storePrice || item.product.promoPrice),
-		0
-	);
+	const subtotal = activeOrder?.items.reduce((sum, item) => {
+		const price =
+			item.changedPrice ??
+			item.originalPrice ??
+			item.product.price ??
+			item.product.storePrice ??
+			item.product.promoPrice ??
+			0;
+		return sum + price * item.quantity;
+	}, 0);
 
+	const taxRate = 0.2; // 20%
+	const tax = subtotal * taxRate;
+	const amountDue = subtotal + tax;
 	const calChange = Math.max(
 		0,
 		parseFloat(expressInputValue || '0') - amountDue
-	);
+	)?.toFixed(2);
 
 	useEffect(() => {
 		setExpressInputValue(amountDue.toFixed(2));
