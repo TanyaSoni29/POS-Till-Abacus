@@ -18,19 +18,19 @@ import {
 // 	createSale,
 // } from '../../services/operations/salesApi';
 // import { refreshTillProductShortcuts } from '../../slices/productSlice';
-// import ThankYou from './ThankYou';
 import Checkout from './Checkout';
 import { clearCart } from '../../slices/orderSlice';
+import ThankYou from './ThankYou';
 
 export default function PaymentMethod({
-	// selectedCustomer,
+	selectedCustomer,
 	cartItems,
-	// onPaymentComplete,
+	onPaymentComplete,
 }) {
 	const dispatch = useDispatch();
 	// const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 	// const [isProcessing, setIsProcessing] = useState(false);
-	// const [isComplete, setIsComplete] = useState(false);
+	const [isComplete, setIsComplete] = useState(false);
 	const [isCheckout, setIsCheckout] = useState(false);
 	// Get Icon based on Payment method
 	// const getPaymentIcon = (iconName) => {
@@ -110,9 +110,9 @@ export default function PaymentMethod({
 	// 	}
 	// };
 
-	// if (isComplete) {
-	// 	return <ThankYou />;
-	// }
+	if (isComplete) {
+		return <ThankYou />;
+	}
 
 	const handleClose = () => {
 		setIsCheckout(false);
@@ -190,7 +190,14 @@ export default function PaymentMethod({
 				</button>
 			</div>
 
-			{isCheckout && <Checkout onclose={handleClose} />}
+			{isCheckout && (
+				<Checkout
+					onclose={handleClose}
+					selectedCustomer={selectedCustomer}
+					onPaymentComplete={onPaymentComplete}
+					setIsComplete={setIsComplete}
+				/>
+			)}
 		</div>
 	);
 }

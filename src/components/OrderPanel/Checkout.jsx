@@ -2,7 +2,10 @@
 
 import { Check, CheckCheck, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { refreshPaymentTypes } from '../../slices/tillPaymentTypesSlice';
+import { refreshTillProductShortcuts } from '../../slices/productSlice';
+import { createSale } from '../../services/operations/salesApi';
 
 const calButtons = [
 	'1',
@@ -23,32 +26,41 @@ const calButtons = [
 	'£50',
 ];
 
-const paymentTypesInput = [
-	'CASH',
-	'CHEQUE',
-	'MASTERCARD',
-	'VISA',
-	'VOUCHER',
-	'CREDIT',
-	'SWITCH',
-	'CONNECT',
-	'PAYPAL',
-	'SAGEPAY',
-	'OWN CARD',
-	'OTHER',
-	'DEPOSIT',
-	'GIANT C & C',
-	'CYCLE SCHEME',
-	'LOYALTY POINTS',
-];
+// const paymentTypesInput = [
+// 	'CASH',
+// 	'CHEQUE',
+// 	'MASTERCARD',
+// 	'VISA',
+// 	'VOUCHER',
+// 	'CREDIT',
+// 	'SWITCH',
+// 	'CONNECT',
+// 	'PAYPAL',
+// 	'SAGEPAY',
+// 	'OWN CARD',
+// 	'OTHER',
+// 	'DEPOSIT',
+// 	'GIANT C & C',
+// 	'CYCLE SCHEME',
+// 	'LOYALTY POINTS',
+// ];
 
 const paymentMethodBtn = ['CASH', 'CARD', 'INTEGRATED CARD', 'CREDIT'];
 
-export default function Checkout({ onclose }) {
+export default function Checkout({
+	onclose,
+	selectedCustomer,
+	onPaymentComplete,
+	setIsComplete,
+}) {
+	const dispatch = useDispatch();
 	const { activeOrderId, orders } = useSelector((state) => state.order);
+	const { paymentTypes } = useSelector((state) => state.paymentType);
 	const [activeTab, setActiveTab] = useState('express');
 	const [expressInputValue, setExpressInputValue] = useState('0.00');
-
+	const [selectedPaymentType, setSelectedPaymentType] = useState(null);
+	const [tenderedAmounts, setTenderedAmounts] = useState({});
+	const [isProcessing, setIsProcessing] = useState(false);
 	const activeOrder = orders.find((order) => order.id === activeOrderId);
 	const tabs = [
 		{ key: 'express', label: 'Express Checkout', icon: <Check size={20} /> },
@@ -61,6 +73,7 @@ export default function Checkout({ onclose }) {
 
 	const handleButtonClick = (btn) => {
 		if (btn.startsWith('£')) {
+			console.log(btn.replace('£', ''));
 			const numericValue = btn.replace('£', '');
 			setExpressInputValue(parseFloat(numericValue).toFixed(2));
 		} else if (btn === '<') {
@@ -75,6 +88,134 @@ export default function Checkout({ onclose }) {
 				if (btn === '.' && prev.includes('.')) return prev;
 				return newVal;
 			});
+		}
+	};
+
+	const handleAdvanceButtonClick = (btn) => {
+		if (!selectedPaymentType) return;
+
+		setTenderedAmounts((prev) => {
+			let currentValue = prev[selectedPaymentType]?.toString() || '0.00';
+
+			// Handle £ buttons
+			if (btn.startsWith('£')) {
+				const numericValue = btn.replace('£', '');
+				return {
+					...prev,
+					[selectedPaymentType]: numericValue,
+				};
+			}
+
+			// Handle backspace
+			if (btn === '<') {
+				let newVal = currentValue.slice(0, -1);
+				if (newVal === '' || newVal === '.') newVal = '0.00';
+				return {
+					...prev,
+					[selectedPaymentType]: newVal,
+				};
+			}
+
+			// Handle decimal point
+			if (btn === '.') {
+				if (currentValue.includes('.')) return prev;
+				currentValue += '.';
+				return {
+					...prev,
+					[selectedPaymentType]: currentValue,
+				};
+			}
+
+			// Handle digits
+			if (!isNaN(btn)) {
+				let newVal =
+					currentValue === '0' || currentValue === '0.00'
+						? btn
+						: currentValue + btn;
+				return {
+					...prev,
+					[selectedPaymentType]: newVal,
+				};
+			}
+
+			return prev;
+		});
+	};
+
+	const handleClickEnter = async () => {
+		if (!tenderedAmounts || Object.keys(tenderedAmounts).length === 0) return;
+
+		setIsProcessing(true);
+
+		try {
+			// 1. Extract payment types used with non-zero values
+			const selectedPaymentTypes = Object.entries(tenderedAmounts)
+				.filter(([_, amount]) => parseFloat(amount) > 0)
+				.map(([typeName, amount]) => {
+					const matchedType = paymentTypes.find((pt) => pt.name === typeName);
+
+					return {
+						paymentType: matchedType?.paymentType ?? 0,
+						transactionRef: '',
+						type: matchedType?.name ?? typeName,
+						amount: parseFloat(amount),
+						createdAt: new Date().toISOString(),
+						updatedAt: new Date().toISOString(),
+						saleTransactionId: 0, // Replace if needed
+					};
+				});
+
+			// 2. Prepare cart items
+			const cartItems = activeOrder.items.map((item) => ({
+				partNumber: item.product.partNumber,
+				quantity: item.quantity,
+				unitPrice: item.product.price || item.product.promoPrice || 0,
+				discount: item.product.discount || 0,
+				vat: 0, // Add logic if you use VAT
+				costPrice: item.product.costPrice || 0,
+				isPromo: item.product.isPromo || false,
+				stockNumber: item.product.stockNumber || '00',
+			}));
+
+			// 3. Final Payload
+			const payload = {
+				customerAccount: selectedCustomer.accNo,
+				items: cartItems,
+				paymentTypes: selectedPaymentTypes,
+				paymentDueDate: new Date().toISOString(),
+				tillId: 'A',
+				location: '01',
+				salesCode: '01',
+				discountCode: '',
+				notes: '',
+				invoiceNumber: '',
+				orderNo: '',
+			};
+
+			console.log('Submitting sale payload:', payload);
+
+			// 🔁 Send to backend (replace with your API call)
+			let response = await createSale(payload);
+
+			if (response.status === 'success') {
+				setIsProcessing(false);
+				setIsComplete(true);
+				setTenderedAmounts({});
+				setSelectedPaymentType(null);
+				dispatch(refreshTillProductShortcuts('A'));
+				// Auto close after success
+				setTimeout(() => {
+					onPaymentComplete();
+					setIsComplete(false);
+				}, 2000);
+			} else {
+				console.log('Payment Error:', response);
+				setIsProcessing(false);
+			}
+			// ✅ Reset state
+		} catch (error) {
+			console.error('Sale failed:', error);
+			setIsProcessing(false);
 		}
 	};
 
@@ -104,6 +245,10 @@ export default function Checkout({ onclose }) {
 	useEffect(() => {
 		setExpressInputValue(amountDue.toFixed(2));
 	}, [amountDue]);
+
+	useEffect(() => {
+		dispatch(refreshPaymentTypes());
+	}, [dispatch]);
 
 	return (
 		<div
@@ -227,16 +372,29 @@ export default function Checkout({ onclose }) {
 								{/* Left Panel: Payment Type Inputs */}
 								<div className='space-y-2'>
 									<h3 className='font-bold text-blue-600 mb-2'>PAYMENT TYPE</h3>
-									{paymentTypesInput.map((type) => (
+									{paymentTypes.map((type) => (
 										<div
-											key={type}
+											key={type?.id}
 											className='flex items-center justify-between'
 										>
-											<label className='text-gray-700 text-sm'>{type}:</label>
+											<label className='text-gray-700 text-sm'>
+												{type.name}:
+											</label>
 											<input
-												type='number'
-												className='border border-gray-300 rounded px-2 py-1 text-sm w-24'
-												defaultValue='0.00'
+												type='text'
+												readOnly
+												onClick={() => setSelectedPaymentType(type.name)}
+												value={
+													tenderedAmounts[type.name] !== undefined &&
+													tenderedAmounts[type.name] !== null
+														? parseFloat(tenderedAmounts[type.name]).toFixed(2)
+														: '0.00'
+												}
+												className={`border border-gray-300 rounded px-2 py-1 text-sm w-24 cursor-pointer bg-white ${
+													selectedPaymentType === type.name
+														? 'ring-2 ring-blue-500'
+														: ''
+												}`}
 											/>
 										</div>
 									))}
@@ -296,12 +454,17 @@ export default function Checkout({ onclose }) {
 										{calButtons.map((btn, i) => (
 											<button
 												key={i}
+												onClick={() => handleAdvanceButtonClick(btn)}
 												className='py-3 text-center bg-white border border-gray-200 rounded-lg hover:bg-gray-100 text-lg font-semibold'
 											>
 												{btn}
 											</button>
 										))}
-										<button className='col-span-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold'>
+										<button
+											className='col-span-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold'
+											onClick={handleClickEnter}
+											disabled={isProcessing}
+										>
 											ENTER
 										</button>
 										{/* Bottom Row: Account Balance */}

@@ -15,6 +15,7 @@ export const tillEndpoints = {
 		`${BASE}/api/Till/getTillProductShortcuts?SetID=${SetID || 'A'}`,
 	GET_TILL_PRODUCT: (partnumber, locCode) =>
 		`${BASE}/api/Till/getTillProduct?partnumber=${partnumber}&locCode=${locCode}`,
+	GET_TILL_PAYMENT_TYPES: `${BASE}/api/TillPaymentTypes`,
 };
 
 export const PrtoductEndpoiunts = {
