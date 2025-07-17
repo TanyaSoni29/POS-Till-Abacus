@@ -8,6 +8,10 @@ export const customerEndpoints = {
 	CREATE_CUSTOMERS: `${BASE}/api/Customer/`,
 	UPDATE_CUSTOMERS: (id) => `${BASE}/api/Customer/${id}`,
 	DELETE_CUSTOMERS: (id) => `${BASE}/api/Customer/${id}`,
+	SEARCH_CUSTOMERS: (filters) => {
+		const queryParams = new URLSearchParams(filters).toString();
+		return `${BASE}/api/Customer/search?${queryParams}`;
+	},
 };
 
 export const tillEndpoints = {

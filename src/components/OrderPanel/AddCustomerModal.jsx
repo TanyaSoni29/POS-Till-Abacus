@@ -11,7 +11,10 @@ export default function AddCustomerModal({ onclose }) {
 		formState: { errors },
 	} = useForm();
 
-	const onSubmit = () => {};
+	const onSubmit = (data) => {
+		console.log(data);
+	};
+	
 	return (
 		<div
 			className='fixed inset-0 flex justify-center items-center bg-black/25 overflow-hidden'
@@ -63,9 +66,7 @@ export default function AddCustomerModal({ onclose }) {
 								<input
 									type='text'
 									placeholder='Enter customer number...'
-									{...register('customerAccount', {
-										required: 'This field is required.',
-									})}
+									{...register('customerAccount', 'This field is required')}
 									className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 								/>
 							</FormRow>
@@ -76,9 +77,7 @@ export default function AddCustomerModal({ onclose }) {
 								<input
 									type='text'
 									placeholder='Enter claim ref...'
-									{...register('claimRef', {
-										required: 'This field is required.',
-									})}
+									{...register('claimRef')}
 									className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 								/>
 							</FormRow>
@@ -89,9 +88,7 @@ export default function AddCustomerModal({ onclose }) {
 								<input
 									type='text'
 									placeholder='Enter purchase order number...'
-									{...register('purchaseOrderNo', {
-										required: 'This field is required.',
-									})}
+									{...register('purchaseOrderNo')}
 									className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 								/>
 							</FormRow>
@@ -104,9 +101,7 @@ export default function AddCustomerModal({ onclose }) {
 								<input
 									type='text'
 									placeholder='Enter loyalty card Number...'
-									{...register('loyaltyCardNo', {
-										required: 'This field is required.',
-									})}
+									{...register('loyaltyCardNo')}
 									className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 								/>
 							</FormRow>
@@ -117,9 +112,7 @@ export default function AddCustomerModal({ onclose }) {
 								<input
 									type='text'
 									placeholder='Enter customer category...'
-									{...register('customerCategory', {
-										required: 'This field is required.',
-									})}
+									{...register('customerCategory')}
 									className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 								/>
 							</FormRow>
@@ -130,7 +123,7 @@ export default function AddCustomerModal({ onclose }) {
 								<input
 									type='text'
 									placeholder='Enter details...'
-									{...register('details' )}
+									{...register('details')}
 									className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 								/>
 							</FormRow>

@@ -29,25 +29,6 @@ const calButtons = [
 	'£50',
 ];
 
-// const paymentTypesInput = [
-// 	'CASH',
-// 	'CHEQUE',
-// 	'MASTERCARD',
-// 	'VISA',
-// 	'VOUCHER',
-// 	'CREDIT',
-// 	'SWITCH',
-// 	'CONNECT',
-// 	'PAYPAL',
-// 	'SAGEPAY',
-// 	'OWN CARD',
-// 	'OTHER',
-// 	'DEPOSIT',
-// 	'GIANT C & C',
-// 	'CYCLE SCHEME',
-// 	'LOYALTY POINTS',
-// ];
-
 export default function Checkout({
 	onclose,
 	selectedCustomer,

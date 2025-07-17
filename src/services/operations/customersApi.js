@@ -6,6 +6,7 @@ import { customerEndpoints } from '../apis';
 
 const {
 	GET_CUSTOMERS,
+	SEARCH_CUSTOMERS,
 	// CREATE_CUSTOMERS,
 	// UPDATE_CUSTOMERS,
 	// DELETE_CUSTOMERS,
@@ -89,3 +90,22 @@ export async function getCustomers() {
 // 	}
 // 	return false;
 // }
+
+export async function searchCustomers(filters) {
+	const response = await handleGetReq(SEARCH_CUSTOMERS(filters));
+	console.log('get all search customers response ---', response);
+
+	if (response.status === 'success') {
+		// sendLogs(
+		// 	{
+		// 		url: GET_LOCAL_POI2,
+		// 		reqBody: searchTerm,
+		// 		headers: setHeaders(),
+		// 		response: response,
+		// 	},
+		// 	'info'
+		// );
+		return response;
+	}
+	return null;
+}
