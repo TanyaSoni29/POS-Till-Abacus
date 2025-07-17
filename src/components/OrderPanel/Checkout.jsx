@@ -1,11 +1,14 @@
 /** @format */
 
 import { Check, CheckCheck, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { refreshPaymentTypes } from '../../slices/tillPaymentTypesSlice';
 import { refreshTillProductShortcuts } from '../../slices/productSlice';
 import { createSale } from '../../services/operations/salesApi';
+import ExpressCheckout from './Checkout/ExpressCheckout';
+import AdvanceCheckout from './Checkout/AdvanceCheckout';
+import CheckoutTabs from './Checkout/CheckoutTabs';
 
 const calButtons = [
 	'1',
@@ -44,8 +47,6 @@ const calButtons = [
 // 	'CYCLE SCHEME',
 // 	'LOYALTY POINTS',
 // ];
-
-const paymentMethodBtn = ['CASH', 'CARD', 'INTEGRATED CARD', 'CREDIT'];
 
 export default function Checkout({
 	onclose,
@@ -150,15 +151,15 @@ export default function Checkout({
 		try {
 			// 1. Extract payment types used with non-zero values
 			const selectedPaymentTypes = Object.entries(tenderedAmounts)
-				.filter(([_, amount]) => parseFloat(amount) > 0)
-				.map(([typeName, amount]) => {
+				.filter(([, amount]) => parseFloat(amount) > 0)
+				.map(([typeName]) => {
 					const matchedType = paymentTypes.find((pt) => pt.name === typeName);
 
 					return {
-						paymentType: matchedType?.paymentType ?? 0,
+						paymentType: matchedType?.type ?? 0,
 						transactionRef: '',
 						type: matchedType?.name ?? typeName,
-						amount: parseFloat(amount),
+						amount: parseFloat(amountDue),
 						createdAt: new Date().toISOString(),
 						updatedAt: new Date().toISOString(),
 						saleTransactionId: 0, // Replace if needed
@@ -192,8 +193,6 @@ export default function Checkout({
 				orderNo: '',
 			};
 
-			console.log('Submitting sale payload:', payload);
-
 			// 🔁 Send to backend (replace with your API call)
 			let response = await createSale(payload);
 
@@ -219,28 +218,41 @@ export default function Checkout({
 		}
 	};
 
-	const subtotal = activeOrder?.items.reduce((sum, item) => {
-		const price =
-			item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0;
-		return sum + price * item.quantity;
-	}, 0);
+	const toggleActiveTab = (tab) => {
+		setActiveTab(tab);
+	};
 
-	const discountTotal = activeOrder.items.reduce((acc, item) => {
-		const original =
-			(item.originalPrice ?? item.product.price ?? 0) * item.quantity;
-		const changed =
-			(item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0) *
-			item.quantity;
-		return acc + (original - changed);
-	}, 0);
+	const subtotal = useMemo(() => {
+		return activeOrder?.items.reduce((sum, item) => {
+			const price =
+				item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0;
+			return sum + price * item.quantity;
+		}, 0);
+	}, [activeOrder?.items]);
 
-	const taxRate = 0.2; // 20%
-	const tax = subtotal * taxRate;
-	const amountDue = subtotal + tax;
+	const discountTotal = useMemo(() => {
+		return activeOrder.items.reduce((acc, item) => {
+			const original =
+				(item.originalPrice ?? item.product.price ?? 0) * item.quantity;
+			const changed =
+				(item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0) *
+				item.quantity;
+			return acc + (original - changed);
+		}, 0);
+	}, [activeOrder.items]);
+
+	const tax = useMemo(() => subtotal * 0.2, [subtotal]);
+	const amountDue = useMemo(() => subtotal + tax, [subtotal, tax]);
 	const calChange = Math.max(
 		0,
 		parseFloat(expressInputValue || '0') - amountDue
 	)?.toFixed(2);
+
+	const advanceCalChange = (
+		Object.values(tenderedAmounts)
+			.map((val) => Number(val))
+			.reduce((acc, curr) => acc + curr, 0) - amountDue
+	).toFixed(2);
 
 	useEffect(() => {
 		setExpressInputValue(amountDue.toFixed(2));
@@ -271,210 +283,38 @@ export default function Checkout({
 				</div>
 
 				{/* Checkout Tabs */}
-				<div className='flex justify-start items-center gap-4 px-6 py-4'>
-					<div className='text-gray-700 flex justify-center items-center space-x-4'>
-						{tabs.map((tab) => (
-							<button
-								onClick={() => setActiveTab(tab.key)}
-								key={tab.key}
-								className={`cursor-pointer p-2 rounded-lg flex item-center justify-center ${
-									activeTab === tab.key
-										? 'bg-blue-100 text-blue-700 border border-blue-600'
-										: ' hover:text-gray-800 hover:bg-gray-200 '
-								} `}
-							>
-								{tab.icon}
-								<span>{tab.label}</span>
-							</button>
-						))}
-					</div>
-				</div>
+				<CheckoutTabs
+					toggleActiveTab={toggleActiveTab}
+					activeTab={activeTab}
+					tabs={tabs}
+				/>
 
 				{/* Tab Content */}
 				<div className='px-6 pb-4 pt-0'>
 					{activeTab === 'express' && (
-						<div className='flex flex-col gap-6'>
-							<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-								{/* Left Panel - Summary */}
-								<div className='bg-white border border-gray-200 rounded-xl p-4 space-y-4'>
-									<button
-										className='w-full py-2 px-4 bg-gray-100 border border-gray-300 rounded-lg hover:border-blue-400'
-										onClick={() => setActiveTab('advance')}
-									>
-										SPLIT PAYMENT
-									</button>
-									<h3 className='text-lg font-semibold'>Summary</h3>
-									<div className='flex justify-between'>
-										<span className='text-gray-700'>Amount Due:</span>
-										<span className='font-bold text-lg text-black'>
-											£{amountDue?.toFixed(2)}
-										</span>
-									</div>
-									<div className='flex justify-between'>
-										<span className='text-gray-700'>V.A.T.:</span>
-										<span className='text-gray-700'>£{tax?.toFixed(2)}</span>
-									</div>
-									<div className='flex justify-between'>
-										<span className='text-gray-700'>Discounts:</span>
-										<span className='text-gray-700'>
-											£{discountTotal.toFixed(2)}
-										</span>
-									</div>
-									<div className='flex justify-between'>
-										<span className='text-red-600 font-semibold'>Change:</span>
-										<span className='text-red-600 font-bold'>£{calChange}</span>
-									</div>
-								</div>
-
-								{/* Right Panel - Number Pad */}
-								<div className='md:col-span-2 flex flex-col justify-between'>
-									<div className='flex justify-between items-center mb-2'>
-										<input
-											type='text'
-											readOnly
-											value={expressInputValue}
-											className='text-right text-2xl border border-gray-300 rounded-md px-4 py-2 w-full font-mono'
-										/>
-										<button className='ml-4 px-4 py-2 bg-red-100 text-red-600 font-semibold rounded-lg hover:bg-red-200'>
-											CANCEL
-										</button>
-									</div>
-									{/* Cal Buttons */}
-									<div className='grid grid-cols-4 gap-2'>
-										{calButtons.map((btn, i) => (
-											<button
-												key={i}
-												onClick={() => handleButtonClick(btn)}
-												className='py-3 text-center bg-white border border-gray-200 rounded-lg hover:bg-gray-100 text-lg font-semibold'
-											>
-												{btn}
-											</button>
-										))}
-									</div>
-								</div>
-							</div>
-							{/* Right Panel - Payment Methods */}
-							<div className='grid grid-cols-4 col-span-4 gap-3 items-start'>
-								{paymentMethodBtn.map((method, i) => (
-									<button
-										key={i}
-										className='col-span-1 py-3 px-2 bg-white border border-gray-200 rounded-lg hover:border-blue-400 font-semibold'
-									>
-										{method}
-									</button>
-								))}
-							</div>
-						</div>
+						<ExpressCheckout
+							toggleActiveTab={toggleActiveTab}
+							amountDue={amountDue}
+							tax={tax}
+							discountTotal={discountTotal}
+							calChange={calChange}
+							expressInputValue={expressInputValue}
+							handleButtonClick={handleButtonClick}
+							calButtons={calButtons}
+						/>
 					)}
 					{activeTab === 'advance' && (
-						<div className='flex flex-col gap-6'>
-							<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-								{/* Left Panel: Payment Type Inputs */}
-								<div className='space-y-2'>
-									<h3 className='font-bold text-blue-600 mb-2'>PAYMENT TYPE</h3>
-									{paymentTypes.map((type) => (
-										<div
-											key={type?.id}
-											className='flex items-center justify-between'
-										>
-											<label className='text-gray-700 text-sm'>
-												{type.name}:
-											</label>
-											<input
-												type='text'
-												readOnly
-												onClick={() => setSelectedPaymentType(type.name)}
-												value={
-													tenderedAmounts[type.name] !== undefined &&
-													tenderedAmounts[type.name] !== null
-														? parseFloat(tenderedAmounts[type.name]).toFixed(2)
-														: '0.00'
-												}
-												className={`border border-gray-300 rounded px-2 py-1 text-sm w-24 cursor-pointer bg-white ${
-													selectedPaymentType === type.name
-														? 'ring-2 ring-blue-500'
-														: ''
-												}`}
-											/>
-										</div>
-									))}
-
-									{/* Giant Reference Fields */}
-									<div className='mt-2'>
-										<label className='block text-sm font-medium'>
-											GIANT REF:
-										</label>
-										<input
-											type='text'
-											className='w-full border border-gray-300 rounded px-2 py-1 mt-1'
-										/>
-									</div>
-								</div>
-
-								{/* Middle Panel: Cash Options + Summary */}
-								<div className='flex flex-col justify-between col-span-2 gap-4'>
-									<div className='grid grid-cols-2 gap-4'>
-										{/* Amount Summary */}
-										<div className='space-y-2 mt-4'>
-											<div className='flex justify-between'>
-												<span className='text-gray-600'>AMOUNT DUE:</span>
-												<span className='font-bold text-black text-lg'>
-													£25.00
-												</span>
-											</div>
-											<div className='flex justify-between'>
-												<span className='text-gray-600'>TENDERED:</span>
-												<span className='text-gray-800'>£0.00</span>
-											</div>
-											<div className='flex justify-between'>
-												<span className='text-gray-600'>REMAINING:</span>
-												<span className='text-gray-800'>£0.00</span>
-											</div>
-											<div className='flex justify-between'>
-												<span className='text-red-600 font-semibold'>
-													CHANGE:
-												</span>
-												<span className='text-red-600 font-bold'>£0.00</span>
-											</div>
-										</div>
-										<div className='space-y-2'>
-											<button className='w-full py-2 bg-green-500 text-white rounded-lg font-semibold'>
-												DONE
-											</button>
-											<button className='w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold'>
-												CUSTOMER PRESENT
-											</button>
-											<button className='w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold'>
-												RETURN TO SALE
-											</button>
-										</div>
-									</div>
-									{/* Cal Buttons */}
-									<div className='grid grid-cols-4 gap-2'>
-										{calButtons.map((btn, i) => (
-											<button
-												key={i}
-												onClick={() => handleAdvanceButtonClick(btn)}
-												className='py-3 text-center bg-white border border-gray-200 rounded-lg hover:bg-gray-100 text-lg font-semibold'
-											>
-												{btn}
-											</button>
-										))}
-										<button
-											className='col-span-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold'
-											onClick={handleClickEnter}
-											disabled={isProcessing}
-										>
-											ENTER
-										</button>
-										{/* Bottom Row: Account Balance */}
-										<div className='col-span-4 text-sm text-right font-semibold text-blue-600'>
-											ACCOUNT BALANCE: £100350.73
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+						<AdvanceCheckout
+							setSelectedPaymentType={setSelectedPaymentType}
+							tenderedAmounts={tenderedAmounts}
+							selectedPaymentType={selectedPaymentType}
+							amountDue={amountDue}
+							advanceCalChange={advanceCalChange}
+							calButtons={calButtons}
+							handleAdvanceButtonClick={handleAdvanceButtonClick}
+							handleClickEnter={handleClickEnter}
+							isProcessing={isProcessing}
+						/>
 					)}
 				</div>
 			</div>

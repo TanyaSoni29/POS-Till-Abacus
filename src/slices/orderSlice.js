@@ -73,6 +73,10 @@ export const addToCart = (addProduct) => {
 		try {
 			const completeProduct = await getTillProduct(addProduct.partNumber, '01');
 			const product = completeProduct.data;
+
+			if (product.stockHere === 0) {
+				throw new Error('Insufficient Stock');
+			}
 			const existingItem = activeOrder.items.find(
 				(item) => item.product.partNumber === product.partNumber
 			);
