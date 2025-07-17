@@ -143,7 +143,7 @@ export default function Checkout({
 		});
 	};
 
-	const handleClickEnter = async () => {
+	const handleAdvancePayment = async () => {
 		if (!tenderedAmounts || Object.keys(tenderedAmounts).length === 0) return;
 
 		setIsProcessing(true);
@@ -212,6 +212,69 @@ export default function Checkout({
 				setIsProcessing(false);
 			}
 			// ✅ Reset state
+		} catch (error) {
+			console.error('Sale failed:', error);
+			setIsProcessing(false);
+		}
+	};
+
+	const handleExpressPayment = async (method) => {
+		if (!expressInputValue) return;
+		setIsProcessing(true);
+		try {
+			const matchedPaymentType = paymentTypes.find((pt) => pt.name === method);
+
+			const paymentTypeData = [
+				{
+					paymentType: matchedPaymentType?.type ?? 0,
+					transactionRef: '',
+					type: matchedPaymentType?.name || '',
+					amount: parseFloat(amountDue),
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString(),
+					saleTransactionId: 0, // Replace if needed
+				},
+			];
+
+			const cartItems = activeOrder.items.map((item) => ({
+				partNumber: item.product.partNumber,
+				quantity: item.quantity,
+				unitPrice: item.product.price || item.product.promoPrice || 0,
+				discount: item.product.discount || 0,
+				vat: 0, // Add logic if you use VAT
+				costPrice: item.product.costPrice || 0,
+				isPromo: item.product.isPromo || false,
+				stockNumber: item.product.stockNumber || '00',
+			}));
+			const payload = {
+				customerAccount: selectedCustomer.accNo,
+				items: cartItems,
+				paymentTypes: paymentTypeData,
+				paymentDueDate: new Date().toISOString(),
+				tillId: 'A',
+				location: '01',
+				salesCode: '01',
+				discountCode: '',
+				notes: '',
+				invoiceNumber: '',
+				orderNo: '',
+			};
+
+			let response = await createSale(payload);
+
+			if (response.status === 'success') {
+				setIsProcessing(false);
+				setIsComplete(true);
+				dispatch(refreshTillProductShortcuts('A'));
+				// Auto close after success
+				setTimeout(() => {
+					onPaymentComplete();
+					setIsComplete(false);
+				}, 2000);
+			} else {
+				console.log('Payment Error:', response);
+				setIsProcessing(false);
+			}
 		} catch (error) {
 			console.error('Sale failed:', error);
 			setIsProcessing(false);
@@ -301,6 +364,7 @@ export default function Checkout({
 							expressInputValue={expressInputValue}
 							handleButtonClick={handleButtonClick}
 							calButtons={calButtons}
+							handleExpressPayment={handleExpressPayment}
 						/>
 					)}
 					{activeTab === 'advance' && (
@@ -312,7 +376,7 @@ export default function Checkout({
 							advanceCalChange={advanceCalChange}
 							calButtons={calButtons}
 							handleAdvanceButtonClick={handleAdvanceButtonClick}
-							handleClickEnter={handleClickEnter}
+							handleClickEnter={handleAdvancePayment}
 							isProcessing={isProcessing}
 						/>
 					)}

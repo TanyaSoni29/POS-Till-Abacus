@@ -1,6 +1,6 @@
 /** @format */
 
-import Summary from "./Summary";
+import Summary from './Summary';
 
 const paymentMethodBtn = ['CASH', 'CARD', 'INTEGRATED CARD', 'CREDIT'];
 
@@ -12,7 +12,8 @@ export default function ExpressCheckout({
 	calChange,
 	expressInputValue,
 	handleButtonClick,
-    calButtons
+	calButtons,
+	handleExpressPayment,
 }) {
 	return (
 		<div className='flex flex-col gap-6'>
@@ -66,6 +67,7 @@ export default function ExpressCheckout({
 					<button
 						key={i}
 						className='col-span-1 py-3 px-2 bg-white border border-gray-200 rounded-lg hover:border-blue-400 font-semibold'
+						onClick={() => handleExpressPayment(method)}
 					>
 						{method}
 					</button>
