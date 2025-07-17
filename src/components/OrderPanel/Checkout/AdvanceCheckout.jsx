@@ -12,6 +12,7 @@ export default function AdvanceCheckout({
 	handleAdvanceButtonClick,
 	handleClickEnter,
 	isProcessing,
+	setTenderedAmounts,
 }) {
 	const { paymentTypes } = useSelector((state) => state.paymentType);
 	return (
@@ -28,14 +29,29 @@ export default function AdvanceCheckout({
 							<label className='text-gray-700 text-sm'>{type.name}:</label>
 							<input
 								type='text'
-								readOnly
 								onClick={() => setSelectedPaymentType(type.name)}
-								value={
-									tenderedAmounts[type.name] !== undefined &&
-									tenderedAmounts[type.name] !== null
-										? parseFloat(tenderedAmounts[type.name]).toFixed(2)
-										: '0.00'
-								}
+								value={tenderedAmounts[type.name] ?? ''}
+								defaultValue='0.00'
+								onChange={(e) => {
+									const inputValue = e.target.value;
+
+									// Allow empty input
+									if (inputValue === '') {
+										setTenderedAmounts((prev) => ({
+											...prev,
+											[type.name]: '',
+										}));
+										return;
+									}
+
+									// Allow valid decimal values
+									if (/^\d*\.?\d{0,2}$/.test(inputValue)) {
+										setTenderedAmounts((prev) => ({
+											...prev,
+											[type.name]: inputValue,
+										}));
+									}
+								}}
 								className={`border border-gray-300 rounded px-2 py-1 text-sm w-24 cursor-pointer bg-white ${
 									selectedPaymentType === type.name
 										? 'ring-2 ring-blue-500'

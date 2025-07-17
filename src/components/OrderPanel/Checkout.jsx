@@ -359,6 +359,7 @@ export default function Checkout({
 							handleAdvanceButtonClick={handleAdvanceButtonClick}
 							handleClickEnter={handleAdvancePayment}
 							isProcessing={isProcessing}
+							setTenderedAmounts={setTenderedAmounts}
 						/>
 					)}
 				</div>
