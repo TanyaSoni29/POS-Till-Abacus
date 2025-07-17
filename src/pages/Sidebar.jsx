@@ -35,7 +35,9 @@ export default function Sidebar() {
 			setOrders([
 				{
 					id: 0,
-					customer: customers[0],
+					customer: customers.filter(
+						(customer) => customer.accNo === '00000'
+					)[0],
 					items: [],
 					createdAt: new Date().toISOString(),
 				},

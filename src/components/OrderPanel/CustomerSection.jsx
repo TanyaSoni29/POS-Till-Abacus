@@ -3,22 +3,55 @@
 import { useState } from 'react';
 import { ChevronDown, Plus, Search, User, Users } from 'lucide-react';
 import AddCustomerModal from './AddCustomerModal';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
+import { searchCustomers } from '../../services/operations/customersApi';
 export default function CustomerSection({
 	selectedCustomer,
 	onSelectCustomer,
 }) {
-	const { customers } = useSelector((state) => state.customer);
+	// const { customers } = useSelector((state) => state.customer);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isCustomerDropdownOpen, setIsCustomerDropdownOpen] = useState(false);
 	const [addCustomerOpen, setAddCustomerOpen] = useState(false);
-
-	const filterCunstomers = customers.filter((customer) =>
-		customer?.firstname.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+	const [searchResults, setSearchResults] = useState([]);
+	const [searchTimeout, setSearchTimeout] = useState(null);
+	// const filterCunstomers = customers.filter((customer) =>
+	// 	customer?.firstname.toLowerCase().includes(searchQuery.toLowerCase())
+	// );
 
 	const handleClose = () => {
 		setAddCustomerOpen(false);
+	};
+
+	const fetchSearchCustomer = async () => {
+		try {
+			const filters = {
+				accNo: searchQuery,
+			};
+			const response = await searchCustomers(filters);
+			if (response?.status === 'success') {
+				setSearchResults(response?.data);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const handleSearchChange = (e) => {
+		const value = e.target.value;
+		setSearchQuery(value);
+
+		if (searchTimeout) clearTimeout(searchTimeout);
+
+		const timeout = setTimeout(() => {
+			if (value.trim().length > 0) {
+				fetchSearchCustomer();
+			} else {
+				setSearchResults([]);
+			}
+		}, 300); // 300ms debounce
+
+		setSearchTimeout(timeout);
 	};
 
 	return (
@@ -58,7 +91,7 @@ export default function CustomerSection({
 				</div>
 
 				{isCustomerDropdownOpen && (
-					<div className='absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 p-2'>
+					<div className='absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 p-2 '>
 						<div className='flex flex-col'>
 							<div className='flex gap-4'>
 								<div className='relative flex-1'>
@@ -68,9 +101,9 @@ export default function CustomerSection({
 									/>
 									<input
 										type='text'
-										placeholder='Search customers...'
+										placeholder='Search customers accNo...'
 										value={searchQuery}
-										onChange={(e) => setSearchQuery(e.target.value)}
+										onChange={handleSearchChange}
 										className='w-full pl-10 pr-4 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 									/>
 								</div>
@@ -91,14 +124,14 @@ export default function CustomerSection({
 							</div>
 						</div>
 
-						{filterCunstomers.map((customer) => (
+						{searchResults.map((customer) => (
 							<button
 								key={customer.id}
 								onClick={() => {
 									onSelectCustomer(customer);
 									setIsCustomerDropdownOpen(false);
 								}}
-								className='w-full px-3 py-2 text-left overflow-y-auto max-h-48 hover:bg-gray-50 border-b border-gray-100 last:border-b-0'
+								className='w-full px-3 py-2 text-left overflow-y-auto max-h-48 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 '
 							>
 								<div className='flex items-center gap-2'>
 									<Users
