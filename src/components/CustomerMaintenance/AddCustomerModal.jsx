@@ -13,6 +13,7 @@ import {
 import { useForm } from 'react-hook-form';
 import FormRow from '../../ui/common/FormRow';
 import { useState } from 'react';
+import { useOutsideClick } from '../../hook/useOutsideClick';
 
 export default function AddCustomerModal({ onclose }) {
 	const [activeTab, setActiveTab] = useState('profile');
@@ -33,14 +34,13 @@ export default function AddCustomerModal({ onclose }) {
 	const onSubmit = (data) => {
 		console.log('Form submitted:', data);
 	};
+
+	const ref = useOutsideClick(onclose);
 	return (
-		<div
-			className='fixed inset-0 flex justify-center items-center bg-black/25 overflow-hidden'
-			onClick={onclose}
-		>
+		<div className='fixed inset-0 flex justify-center items-center bg-black/25 overflow-hidden'>
 			<div
 				className='bg-white rounded-lg shadow-lg max-w-5xl w-full h-[53rem] flex flex-col'
-				onClick={(e) => e.stopPropagation()}
+				ref={ref}
 			>
 				{/* Header */}
 				<div className='w-full h-[4rem] px-6 py-4 border-b border-b-gray-200'>

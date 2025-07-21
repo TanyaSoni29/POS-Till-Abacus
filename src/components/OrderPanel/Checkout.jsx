@@ -9,6 +9,7 @@ import { createSale } from '../../services/operations/salesApi';
 import ExpressCheckout from './Checkout/ExpressCheckout';
 import AdvanceCheckout from './Checkout/AdvanceCheckout';
 import CheckoutTabs from './Checkout/CheckoutTabs';
+import { useOutsideClick } from '../../hook/useOutsideClick';
 
 const calButtons = [
 	'1',
@@ -306,14 +307,13 @@ export default function Checkout({
 		dispatch(refreshPaymentTypes());
 	}, [dispatch]);
 
+	const ref = useOutsideClick(onclose);
+
 	return (
-		<div
-			className='fixed inset-0 flex justify-center items-center bg-black/25 overflow-hidden'
-			onClick={onclose}
-		>
+		<div className='fixed inset-0 flex justify-center items-center bg-black/25 overflow-hidden'>
 			<div
 				className='bg-white rounded-lg shadow-lg max-w-5xl h-[54rem] w-full flex flex-col gap-2'
-				onClick={(e) => e.stopPropagation()}
+				ref={ref}
 			>
 				{/* Header */}
 				<div className='w-full h-[4rem] px-6 py-4 border-b border-b-gray-200 flex justify-between items-center'>

@@ -29,7 +29,7 @@ export const OrderTabs = () => {
 	const createNewOrder = () => {
 		const newOrder = {
 			id: nextOrderId,
-			customer: customers[0], // Default to walk-in customer
+			customer: customers.find((customer) => customer.accNo === '00000'), // Default to walk-in customer
 			items: [],
 			createdAt: new Date().toISOString(),
 		};

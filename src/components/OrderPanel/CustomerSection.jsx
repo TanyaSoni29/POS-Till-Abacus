@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown, Plus, Search, User, Users } from 'lucide-react';
-import AddCustomerModal from './AddCustomerModal';
+import AddCustomerModal from '../CustomerMaintenance/AddCustomerModal';
 // import { useSelector } from 'react-redux';
 import { searchCustomers } from '../../services/operations/customersApi';
 import { useOutsideClick } from '../../hook/useOutsideClick';
