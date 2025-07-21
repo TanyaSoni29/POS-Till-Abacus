@@ -5,6 +5,7 @@ import { ChevronDown, Plus, Search, User, Users } from 'lucide-react';
 import AddCustomerModal from './AddCustomerModal';
 // import { useSelector } from 'react-redux';
 import { searchCustomers } from '../../services/operations/customersApi';
+import { useOutsideClick } from '../../hook/useOutsideClick';
 export default function CustomerSection({
 	selectedCustomer,
 	onSelectCustomer,
@@ -22,6 +23,12 @@ export default function CustomerSection({
 	const handleClose = () => {
 		setAddCustomerOpen(false);
 	};
+
+	const handleCustomerDropdown = () => {
+		setIsCustomerDropdownOpen(false);
+	};
+
+	const ref = useOutsideClick(handleCustomerDropdown, false);
 
 	const fetchSearchCustomer = async () => {
 		try {
@@ -59,7 +66,10 @@ export default function CustomerSection({
 			<h3 className='text-sm font-semibold text-gray-700 mb-2'>Customer</h3>
 			<div className='relative'>
 				<div
-					onClick={() => setIsCustomerDropdownOpen(!isCustomerDropdownOpen)}
+					onClick={(e) => {
+						e.stopPropagation();
+						setIsCustomerDropdownOpen(!isCustomerDropdownOpen);
+					}}
 					className='w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors'
 				>
 					<div className='flex items-center gap-2'>
@@ -91,7 +101,10 @@ export default function CustomerSection({
 				</div>
 
 				{isCustomerDropdownOpen && (
-					<div className='absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 p-2 '>
+					<div
+						className='absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 p-2'
+						ref={ref}
+					>
 						<div className='flex flex-col'>
 							<div className='flex gap-4'>
 								<div className='relative flex-1'>
