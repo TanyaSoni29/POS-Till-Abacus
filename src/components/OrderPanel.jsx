@@ -3,22 +3,62 @@
 import CustomerSection from './OrderPanel/CustomerSection';
 import PaymentMethod from './OrderPanel/PaymentMethod';
 import CartItemCard from './OrderPanel/CartItemCard';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { setOrders, updateOrder } from '../slices/orderSlice';
+import { refreshCustomers } from '../slices/customerSlice';
 
-export const OrderPanel = ({
-	activeOrder,
-	cartItems,
-	selectedCustomer,
-	onSelectCustomer,
-	onPaymentComplete,
-}) => {
+export const OrderPanel = () => {
+	const dispatch = useDispatch();
+	const customers = useSelector((state) => state.customer.customers);
+	const { activeOrderId, orders } = useSelector((state) => state.order);
+	const activeOrder = orders.find((order) => order.id === activeOrderId);
+
+	const handlePaymentComplete = () => {
+		// Clear the current order after payment
+		dispatch(
+			updateOrder(
+				{ id: activeOrderId, updates: { items: [] } } // Use object destructuring for clarity
+			)
+		);
+	};
+
+	const selectCustomer = (customer) => {
+		if (!activeOrder) return;
+		dispatch(updateOrder({ id: activeOrderId, updates: { customer } }));
+	};
+
+	useEffect(() => {
+		dispatch(
+			setOrders([
+				{
+					id: 0,
+					customer: customers.filter(
+						(customer) => customer.accNo === '00000'
+					)[0],
+					items: [],
+					createdAt: new Date().toISOString(),
+				},
+			])
+		);
+	}, [customers, dispatch]);
+
+	useEffect(() => {
+		dispatch(refreshCustomers());
+	}, [dispatch]);
+
+	const selectedCustomer = activeOrder.customer;
+	const cartItems = activeOrder.items;
+
 	const subtotal = cartItems.reduce((sum, item) => {
 		const price =
 			item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0;
 
 		return sum + price * item.quantity;
 	}, 0);
-	const taxRate = 0.2; // 20%
-	const tax = subtotal * taxRate;
+
+	// VAT Fixed With 20%
+	const tax = subtotal * 0.2;
 	const total = subtotal + tax;
 
 	return (
@@ -26,7 +66,7 @@ export const OrderPanel = ({
 			{/* Customer Section */}
 			<CustomerSection
 				selectedCustomer={selectedCustomer}
-				onSelectCustomer={onSelectCustomer}
+				onSelectCustomer={selectCustomer}
 			/>
 
 			{/* Order Items */}
@@ -78,7 +118,7 @@ export const OrderPanel = ({
 				<PaymentMethod
 					selectedCustomer={selectedCustomer}
 					cartItems={cartItems}
-					onPaymentComplete={onPaymentComplete}
+					onPaymentComplete={handlePaymentComplete}
 				/>
 			)}
 		</div>
