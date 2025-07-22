@@ -1,8 +1,9 @@
 /** @format */
 
 import { useForm } from 'react-hook-form';
-import FormRow from '../ui/common/FormRow';
 import { LogIn } from 'lucide-react';
+
+import FormRow from '../ui/common/FormRow';
 
 export default function POSLogin() {
 	const {

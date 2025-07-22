@@ -1,9 +1,10 @@
 /** @format */
 
 import StoreMallDirectoryOutlinedIcon from '@mui/icons-material/StoreMallDirectoryOutlined';
-import { useDispatch } from 'react-redux';
-import { setActivePanel } from '../slices/settingSlice';
 import { LogOut } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+
+import { setActivePanel } from '../slices/settingSlice';
 export default function Header() {
 	const dispatch = useDispatch();
 	return (

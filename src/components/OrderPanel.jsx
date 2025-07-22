@@ -1,10 +1,11 @@
 /** @format */
 
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import CustomerSection from './OrderPanel/CustomerSection';
 import PaymentMethod from './OrderPanel/PaymentMethod';
 import CartItemCard from './OrderPanel/CartItemCard';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import { setOrders, updateOrder } from '../slices/orderSlice';
 import { refreshCustomers } from '../slices/customerSlice';
 
@@ -47,10 +48,10 @@ export const OrderPanel = () => {
 		dispatch(refreshCustomers());
 	}, [dispatch]);
 
-	const selectedCustomer = activeOrder.customer;
-	const cartItems = activeOrder.items;
+	const selectedCustomer = activeOrder?.customer;
+	const cartItems = activeOrder?.items;
 
-	const subtotal = cartItems.reduce((sum, item) => {
+	const subtotal = cartItems?.reduce((sum, item) => {
 		const price =
 			item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0;
 
@@ -76,13 +77,13 @@ export const OrderPanel = () => {
 				</div>
 
 				<div className='flex-1 overflow-y-auto p-4'>
-					{cartItems.length === 0 ? (
+					{cartItems?.length === 0 ? (
 						<div className='text-center py-8 text-gray-500'>
 							<p>No items in order</p>
 						</div>
 					) : (
 						<div className='space-y-3'>
-							{cartItems.map((item) => (
+							{cartItems?.map((item) => (
 								<CartItemCard
 									key={item.product.partNumber}
 									item={item}
@@ -95,7 +96,7 @@ export const OrderPanel = () => {
 				</div>
 
 				{/* Totals */}
-				{cartItems.length > 0 && (
+				{cartItems?.length > 0 && (
 					<div className='p-4 border-t border-gray-200 space-y-2'>
 						<div className='flex justify-between text-sm'>
 							<span>Subtotal:</span>
@@ -114,7 +115,7 @@ export const OrderPanel = () => {
 			</div>
 
 			{/* Payment Methods */}
-			{cartItems.length > 0 && (
+			{cartItems?.length > 0 && (
 				<PaymentMethod
 					selectedCustomer={selectedCustomer}
 					cartItems={cartItems}
