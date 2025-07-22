@@ -208,6 +208,12 @@ const EposInfoTab = () => {
               {...register('discount', { required: 'This field is required.' })}
               error={errors.discount?.message}
             />
+            <Input 
+               label="VAT Code"
+               type="number"
+               {...register('vat', { required: 'VAT value enter'} )}
+               error={errors.vat?.message}
+            />
             <Input
               label="Store"
               {...register('store', { required: 'This field is required.' })}
