@@ -1,24 +1,65 @@
 /** @format */
 
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import CustomerSection from './OrderPanel/CustomerSection';
 import PaymentMethod from './OrderPanel/PaymentMethod';
 import CartItemCard from './OrderPanel/CartItemCard';
+import { setOrders, updateOrder } from '../slices/orderSlice';
+import { refreshCustomers } from '../slices/customerSlice';
 
-export const OrderPanel = ({
-	activeOrder,
-	cartItems,
-	selectedCustomer,
-	onSelectCustomer,
-	onPaymentComplete,
-}) => {
-	const subtotal = cartItems.reduce((sum, item) => {
+export const OrderPanel = () => {
+	const dispatch = useDispatch();
+	const customers = useSelector((state) => state.customer.customers);
+	const { activeOrderId, orders } = useSelector((state) => state.order);
+	const activeOrder = orders.find((order) => order.id === activeOrderId);
+
+	const handlePaymentComplete = () => {
+		// Clear the current order after payment
+		dispatch(
+			updateOrder(
+				{ id: activeOrderId, updates: { items: [] } } // Use object destructuring for clarity
+			)
+		);
+	};
+
+	const selectCustomer = (customer) => {
+		if (!activeOrder) return;
+		dispatch(updateOrder({ id: activeOrderId, updates: { customer } }));
+	};
+
+	useEffect(() => {
+		dispatch(
+			setOrders([
+				{
+					id: 0,
+					customer: customers.filter(
+						(customer) => customer.accNo === '00000'
+					)[0],
+					items: [],
+					createdAt: new Date().toISOString(),
+				},
+			])
+		);
+	}, [customers, dispatch]);
+
+	useEffect(() => {
+		dispatch(refreshCustomers());
+	}, [dispatch]);
+
+	const selectedCustomer = activeOrder?.customer;
+	const cartItems = activeOrder?.items;
+
+	const subtotal = cartItems?.reduce((sum, item) => {
 		const price =
 			item.changedPrice ?? item.originalPrice ?? item.product.price ?? 0;
 
 		return sum + price * item.quantity;
 	}, 0);
-	const taxRate = 0.2; // 20%
-	const tax = subtotal * taxRate;
+
+	// VAT Fixed With 20%
+	const tax = subtotal * 0.2;
 	const total = subtotal + tax;
 
 	return (
@@ -26,7 +67,7 @@ export const OrderPanel = ({
 			{/* Customer Section */}
 			<CustomerSection
 				selectedCustomer={selectedCustomer}
-				onSelectCustomer={onSelectCustomer}
+				onSelectCustomer={selectCustomer}
 			/>
 
 			{/* Order Items */}
@@ -36,13 +77,13 @@ export const OrderPanel = ({
 				</div>
 
 				<div className='flex-1 overflow-y-auto p-4'>
-					{cartItems.length === 0 ? (
+					{cartItems?.length === 0 ? (
 						<div className='text-center py-8 text-gray-500'>
 							<p>No items in order</p>
 						</div>
 					) : (
 						<div className='space-y-3'>
-							{cartItems.map((item) => (
+							{cartItems?.map((item) => (
 								<CartItemCard
 									key={item.product.partNumber}
 									item={item}
@@ -55,7 +96,7 @@ export const OrderPanel = ({
 				</div>
 
 				{/* Totals */}
-				{cartItems.length > 0 && (
+				{cartItems?.length > 0 && (
 					<div className='p-4 border-t border-gray-200 space-y-2'>
 						<div className='flex justify-between text-sm'>
 							<span>Subtotal:</span>
@@ -74,11 +115,11 @@ export const OrderPanel = ({
 			</div>
 
 			{/* Payment Methods */}
-			{cartItems.length > 0 && (
+			{cartItems?.length > 0 && (
 				<PaymentMethod
 					selectedCustomer={selectedCustomer}
 					cartItems={cartItems}
-					onPaymentComplete={onPaymentComplete}
+					onPaymentComplete={handlePaymentComplete}
 				/>
 			)}
 		</div>

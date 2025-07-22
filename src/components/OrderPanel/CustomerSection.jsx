@@ -4,23 +4,18 @@ import { useState } from 'react';
 import { ChevronDown, Plus, Search, User, Users } from 'lucide-react';
 import ProductForm from '../productform/productform';
 import AddCustomerModal from '../CustomerMaintenance/AddCustomerModal';
-// import { useSelector } from 'react-redux';
 import { searchCustomers } from '../../services/operations/customersApi';
 import { useOutsideClick } from '../../hook/useOutsideClick';
 export default function CustomerSection({
 	selectedCustomer,
 	onSelectCustomer,
 }) {
-	// const { customers } = useSelector((state) => state.customer);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isCustomerDropdownOpen, setIsCustomerDropdownOpen] = useState(false);
 	const [addCustomerOpen, setAddCustomerOpen] = useState(false);
 	const [productFormOpen, setProductFormOpen] = useState(false);
 	const [searchResults, setSearchResults] = useState([]);
 	const [searchTimeout, setSearchTimeout] = useState(null);
-	// const filterCunstomers = customers.filter((customer) =>
-	// 	customer?.firstname.toLowerCase().includes(searchQuery.toLowerCase())
-	// );
 
 	const handleClose = () => {
 		setAddCustomerOpen(false);
@@ -91,12 +86,6 @@ export default function CustomerSection({
 					</div>
 
 					<div className='flex items-center gap-2'>
-						{/* <button className='p-1 hover:bg-gray-100 rounded'>
-							<Plus
-								size={16}
-								className='text-gray-600'
-							/>
-						</button> */}
 						<ChevronDown
 							size={16}
 							className={`text-gray-400 transition-transform ${
