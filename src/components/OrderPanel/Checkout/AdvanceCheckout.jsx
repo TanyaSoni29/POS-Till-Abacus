@@ -1,5 +1,6 @@
 /** @format */
 
+import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function AdvanceCheckout({
@@ -15,13 +16,14 @@ export default function AdvanceCheckout({
 	setTenderedAmounts,
 }) {
 	const { paymentTypes } = useSelector((state) => state.paymentType);
+	const inputRefs = useRef([]);
 	return (
 		<div className='flex flex-col gap-6'>
 			<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 				{/* Left Panel: Payment Type Inputs */}
 				<div className='space-y-2'>
 					<h3 className='font-bold text-blue-600 mb-2'>PAYMENT TYPE</h3>
-					{paymentTypes.map((type) => (
+					{paymentTypes.map((type, index) => (
 						<div
 							key={type?.id}
 							className='flex items-center justify-between'
@@ -29,6 +31,8 @@ export default function AdvanceCheckout({
 							<label className='text-gray-700 text-sm'>{type.name}:</label>
 							<input
 								type='text'
+								ref={(el) => (inputRefs.current[index] = el)}
+								name={type.name}
 								onClick={() => setSelectedPaymentType(type.name)}
 								value={tenderedAmounts[type.name] ?? ''}
 								defaultValue='0.00'
@@ -50,6 +54,15 @@ export default function AdvanceCheckout({
 											...prev,
 											[type.name]: inputValue,
 										}));
+									}
+								}}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										e.preventDefault();
+										const nextInput = inputRefs.current[index + 1];
+										if (nextInput) {
+											nextInput.focus();
+										}
 									}
 								}}
 								className={`border border-gray-300 rounded px-2 py-1 text-sm w-24 cursor-pointer bg-white ${

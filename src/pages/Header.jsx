@@ -3,7 +3,7 @@
 import StoreMallDirectoryOutlinedIcon from '@mui/icons-material/StoreMallDirectoryOutlined';
 import { useDispatch } from 'react-redux';
 import { setActivePanel } from '../slices/settingSlice';
-import { LogOut, SquareArrowRight } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 export default function Header() {
 	const dispatch = useDispatch();
 	return (
