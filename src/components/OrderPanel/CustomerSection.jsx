@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown, Plus, Search, User, Users } from 'lucide-react';
+import ProductForm from '../productform/productform';
 import AddCustomerModal from '../CustomerMaintenance/AddCustomerModal';
 // import { useSelector } from 'react-redux';
 import { searchCustomers } from '../../services/operations/customersApi';
@@ -14,6 +15,7 @@ export default function CustomerSection({
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isCustomerDropdownOpen, setIsCustomerDropdownOpen] = useState(false);
 	const [addCustomerOpen, setAddCustomerOpen] = useState(false);
+	const [productFormOpen, setProductFormOpen] = useState(false);
 	const [searchResults, setSearchResults] = useState([]);
 	const [searchTimeout, setSearchTimeout] = useState(null);
 	// const filterCunstomers = customers.filter((customer) =>
@@ -23,6 +25,10 @@ export default function CustomerSection({
 	const handleClose = () => {
 		setAddCustomerOpen(false);
 	};
+
+	const ProducthandleClose = () => {
+		setProductFormOpen(false);
+	}
 
 	const handleCustomerDropdown = () => {
 		setIsCustomerDropdownOpen(false);
@@ -135,6 +141,20 @@ export default function CustomerSection({
 									</span>
 								</button>
 							</div>
+							<div className='py-2 border-b border-gray-100'>
+								<button
+									className='w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 rounded-lg h-10'
+									onClick={() => setProductFormOpen(true)}
+								>
+									<Plus
+										size={18}
+										className='text-blue-600'
+									/>
+									<span className='ml-2 text-md font-semibold text-blue-600'>
+										Product
+									</span>
+								</button>
+							</div>
 						</div>
 
 						{searchResults.map((customer) => (
@@ -175,6 +195,7 @@ export default function CustomerSection({
 						))}
 
 						{addCustomerOpen && <AddCustomerModal onclose={handleClose} />}
+						{productFormOpen && <ProductForm onclose={ProducthandleClose} />}
 					</div>
 				)}
 			</div>
