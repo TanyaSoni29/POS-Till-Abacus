@@ -22,7 +22,7 @@ export const tillEndpoints = {
 	GET_TILL_PAYMENT_TYPES: `${BASE}/api/TillPaymentTypes`,
 };
 
-export const PrtoductEndpoiunts = {
+export const ProductEndpoints = {
 	GET_PRODUCTS_BY_PART_NUMBER: (partnumber) =>
 		`${BASE}/api/Products/partnumber/${partnumber}`,
 };

@@ -1,9 +1,9 @@
 /** @format */
 
 import { handleGetReq } from '../apiRequestHandler';
-import { PrtoductEndpoiunts } from '../apis';
+import { ProductEndpoints } from '../apis';
 
-const { GET_PRODUCTS_BY_PART_NUMBER } = PrtoductEndpoiunts;
+const { GET_PRODUCTS_BY_PART_NUMBER } = ProductEndpoints;
 
 export async function getProductByPartNumber(partNumber) {
 	const response = await handleGetReq(GET_PRODUCTS_BY_PART_NUMBER(partNumber));
