@@ -59,6 +59,10 @@ export default function CartItemCard({ item, activeOrder, cartItems }) {
 	}, [cartItems, isDiscountOpen]);
 
 	const effectivePrice = item.changedPrice ?? item.originalPrice;
+	const itemTotalQuantityPrice = (item.quantity * effectivePrice)?.toFixed(2);
+	const itemBaseTotalQuantityPrice = (
+		item.quantity * item.originalPrice
+	)?.toFixed(2);
 
 	return (
 		<>
@@ -103,7 +107,7 @@ export default function CartItemCard({ item, activeOrder, cartItems }) {
 						<Plus size={12} />
 					</button>
 					<span className='w-16 text-right font-medium'>
-						${(item.quantity * effectivePrice).toFixed(2)}
+						${itemTotalQuantityPrice}
 					</span>
 					<span
 						onClick={() =>
@@ -134,6 +138,8 @@ export default function CartItemCard({ item, activeOrder, cartItems }) {
 					</button>
 				</div>
 			</div>
+
+			{/* Discount Edit Panel */}
 
 			{isDiscountOpen.itemId === item.product.partNumber &&
 				isDiscountOpen.open && (
@@ -259,11 +265,11 @@ export default function CartItemCard({ item, activeOrder, cartItems }) {
 								<p>
 									Base: {item.quantity} X ${item.originalPrice?.toFixed(2)}
 								</p>
-								<p>${(item.quantity * item.originalPrice).toFixed(2)}</p>
+								<p>${itemBaseTotalQuantityPrice}</p>
 							</div>
 							<div className='flex justify-between items-center gap-2 font-medium text-gray-800'>
 								<p>Item Total</p>
-								<p>${(item.quantity * effectivePrice).toFixed(2)}</p>
+								<p>${itemTotalQuantityPrice}</p>
 							</div>
 						</div>
 					</div>
